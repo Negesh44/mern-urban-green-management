@@ -82,7 +82,8 @@ mern-urban-green-management/
     │   ├── authController.js      # Signup, login, me
     │   ├── assetController.js     # Asset CRUD & query filters
     │   ├── maintenanceController.js # Maintenance logs
-    │   └── reportController.js    # Citizen reporting & task conversion
+    │   ├── reportController.js    # Citizen reporting & task conversion
+    │   └── dashboardController.js # Executive KPIs & analytics aggregation
     ├── middleware/
     │   ├── authMiddleware.js      # JWT verification
     │   ├── roleMiddleware.js      # Role restriction (Admin vs. Citizen)
@@ -96,11 +97,22 @@ mern-urban-green-management/
     │   ├── authRoutes.js
     │   ├── assetRoutes.js
     │   ├── maintenanceRoutes.js
-    │   └── reportRoutes.js
+    │   ├── reportRoutes.js
+    │   └── dashboardRoutes.js     # Executive dashboard & KPI endpoints
     └── tests/
         ├── api_test.js            # Asset & Maintenance test suite
-        └── report_test.js         # Citizen reporting test suite
+        ├── report_test.js         # Citizen reporting test suite
+        └── dashboard_test.js      # Dashboard & KPI aggregation test suite
 ```
+
+---
+
+## 📊 Key Dashboard & KPI Metrics
+- **Executive Summary Cards**: Total Trees, Parks/Reserves, Total Green Area ($m^2$ & Ha), and Pending Citizen Reports.
+- **Tree Health Distribution (Pie Chart)**: Phytosanitary condition breakdown (Healthy, Diseased, Dead) with interactive Recharts donut visualization.
+- **Classification Inventory (Bar Chart)**: Spatial asset tallies across trees, parks, urban forests, and linear green corridors.
+- **Canopy Survival Rate Trend (Area Chart)**: Chronological survival and vitality tracking across planting cohorts.
+- **Needs Attention Triage**: Automatically flags assets overdue for maintenance (>6 months since last work order) or in phytosanitary distress with 1-click action links.
 
 ---
 
