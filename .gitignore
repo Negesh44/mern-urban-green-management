@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Production builds
+client/dist/
+client/dist-ssr/
+*.local
+
+# Environment variables
+.env
+server/.env
+*.env.local
+
+# Database & temporary local data
+.db_data/
+server/.db_data/
+.mongo_uri
+server/.mongo_uri
+
+# Uploaded files (keep folder structure, exclude files)
+server/uploads/assets/*
+!server/uploads/assets/.gitkeep
+server/uploads/reports/*
+!server/uploads/reports/.gitkeep
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
