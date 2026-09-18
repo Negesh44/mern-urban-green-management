@@ -3,23 +3,48 @@ const fs = require('fs');
 const path = require('path');
 
 let mongod = null;
-const dbDir = path.join(__dirname, '..', '.db_data');
-if (!fs.existsSync(dbDir)) {
-  fs.mkdirSync(dbDir, { recursive: true });
+const isVercel = Boolean(process.env.VERCEL);
+const dbDir = isVercel ? '/tmp/.db_data' : path.join(__dirname, '..', '.db_data');
+
+if (!isVercel) {
+  try {
+    if (!fs.existsSync(dbDir)) {
+      fs.mkdirSync(dbDir, { recursive: true });
+    }
+  } catch (err) {
+    // Ignore folder creation errors on read-only environments
+  }
 }
 
 const DB_NAME = 'smart_urban_green';
 
 const connectDB = async () => {
+  // Reuse existing connection in serverless warm invocations
+  if (mongoose.connection.readyState >= 1) {
+    return mongoose.connection;
+  }
+
   const defaultUri = process.env.MONGO_URI || `mongodb://127.0.0.1:27017/${DB_NAME}`;
 
   try {
     const conn = await mongoose.connect(defaultUri, {
-      serverSelectionTimeoutMS: 1500,
+      serverSelectionTimeoutMS: isVercel ? 6000 : 1500,
     });
     console.log(`[MongoDB] Connected to database: ${conn.connection.host} (${conn.connection.name})`);
     return conn;
   } catch (error) {
+    // In Vercel serverless environment, memory server cannot be spun up
+    if (isVercel) {
+      console.error(
+        '[MongoDB Error] Could not connect to MONGO_URI in Vercel environment:',
+        error.message
+      );
+      console.warn(
+        '[MongoDB Tip] Please ensure MONGO_URI is configured in Vercel Project Settings (e.g., MongoDB Atlas connection string).'
+      );
+      throw error;
+    }
+
     console.log(`[MongoDB] Database unreachable at ${defaultUri}. Initializing Embedded Persistent MongoDB Service...`);
     try {
       const { MongoMemoryServer } = require('mongodb-memory-server');

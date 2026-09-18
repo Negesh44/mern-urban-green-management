@@ -3,14 +3,20 @@ const path = require('path');
 const fs = require('fs');
 
 // Ensure destination directories exist
-const assetsUploadDir = path.join(__dirname, '..', 'uploads', 'assets');
-const reportsUploadDir = path.join(__dirname, '..', 'uploads', 'reports');
+const isVercel = Boolean(process.env.VERCEL);
+const uploadBase = isVercel ? '/tmp' : path.join(__dirname, '..');
+const assetsUploadDir = path.join(uploadBase, 'uploads', 'assets');
+const reportsUploadDir = path.join(uploadBase, 'uploads', 'reports');
 
-[assetsUploadDir, reportsUploadDir].forEach((dir) => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-});
+try {
+  [assetsUploadDir, reportsUploadDir].forEach((dir) => {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  });
+} catch (err) {
+  console.warn('[Upload Middleware] Failed to ensure upload directories:', err.message);
+}
 
 // Common file filter for image types
 const fileFilter = (req, file, cb) => {

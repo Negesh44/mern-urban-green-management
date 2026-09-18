@@ -23,7 +23,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static uploaded assets & images
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const uploadPath = process.env.VERCEL
+  ? '/tmp/uploads'
+  : path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(uploadPath));
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -37,6 +40,7 @@ app.get('/', (req, res) => {
   res.json({
     status: 'success',
     message: 'Smart Urban Green Management System API is running',
+    environment: process.env.VERCEL ? 'Vercel Serverless' : 'Standalone Node.js',
     endpoints: {
       auth: '/api/auth',
       assets: '/api/assets',
@@ -50,7 +54,11 @@ app.get('/', (req, res) => {
 
 // Health check route
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'healthy', uptime: process.uptime() });
+  res.json({ 
+    status: 'healthy', 
+    environment: process.env.VERCEL ? 'Vercel Serverless' : 'Standalone Node.js',
+    uptime: process.uptime() 
+  });
 });
 
 // Global Error Handler
@@ -64,8 +72,10 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`[Server] Smart Urban Green Backend running on port ${PORT}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`[Server] Smart Urban Green Backend running on port ${PORT}`);
+  });
+}
 
 module.exports = app;
