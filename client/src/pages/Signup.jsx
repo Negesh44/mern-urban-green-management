@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, Lock, Mail, User, Trees, AlertCircle, Shield, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -22,12 +23,16 @@ const Signup = () => {
     setFormError('');
 
     if (formData.password !== formData.confirmPassword) {
-      setFormError('Passwords do not match. Please verify.');
+      const msg = 'Passwords do not match. Please verify.';
+      setFormError(msg);
+      toast.error(msg);
       return;
     }
 
     if (formData.password.length < 6) {
-      setFormError('Password must be at least 6 characters long.');
+      const msg = 'Password must be at least 6 characters long.';
+      setFormError(msg);
+      toast.error(msg);
       return;
     }
 
@@ -41,11 +46,13 @@ const Signup = () => {
     setIsSubmitting(false);
 
     if (result.success) {
+      toast.success(`Account registered! Welcome, ${result.user.name}`);
       navigate(result.user.role === 'admin' ? '/admin/dashboard' : '/citizen/dashboard', {
         replace: true,
       });
     } else {
       setFormError(result.error);
+      toast.error(result.error || 'Failed to register account');
     }
   };
 

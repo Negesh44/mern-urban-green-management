@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { LogIn, Lock, Mail, Trees, AlertCircle, Sparkles, Shield, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -15,6 +16,7 @@ const Login = () => {
   const handleQuickFill = (email, password) => {
     setFormData({ email, password });
     setFormError('');
+    toast('Credentials filled', { icon: '🔑' });
   };
 
   const handleSubmit = async (e) => {
@@ -23,6 +25,7 @@ const Login = () => {
 
     if (!formData.email || !formData.password) {
       setFormError('Please enter both email and password.');
+      toast.error('Please enter both email and password.');
       return;
     }
 
@@ -31,12 +34,14 @@ const Login = () => {
     setIsSubmitting(false);
 
     if (result.success) {
+      toast.success(`Welcome back, ${result.user.name}!`);
       const redirectPath =
         location.state?.from?.pathname ||
         (result.user.role === 'admin' ? '/admin/dashboard' : '/citizen/dashboard');
       navigate(redirectPath, { replace: true });
     } else {
       setFormError(result.error);
+      toast.error(result.error || 'Authentication failed');
     }
   };
 

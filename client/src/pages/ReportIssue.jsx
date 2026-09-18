@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import API from '../services/api';
 import LocationPickerMap from '../components/LocationPickerMap';
+import toast from 'react-hot-toast';
 
 const ReportIssue = () => {
   const navigate = useNavigate();
@@ -28,25 +29,25 @@ const ReportIssue = () => {
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [locationMessage, setLocationMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   useEffect(() => {
-    fetchAssets();
-    autoDetectLocation();
+    fetchNearbyAssets();
+    handleDetectLocation();
   }, []);
 
-  const fetchAssets = async () => {
+  const fetchNearbyAssets = async () => {
     try {
       const res = await API.get('/api/assets');
       setAssets(res.data.data || []);
     } catch (err) {
-      console.error('Failed to load assets for dropdown', err);
+      console.error('Failed to load asset directory for selector:', err);
     }
   };
 
   // Browser Geolocation auto-detection
-  const autoDetectLocation = () => {
+  const handleDetectLocation = () => {
     if (!navigator.geolocation) {
       setLocationMessage('Geolocation is not supported by your browser.');
       return;
@@ -64,6 +65,7 @@ const ReportIssue = () => {
         setLocation(detected);
         setIsDetectingLocation(false);
         setLocationMessage(`Detected accuracy: ±${Math.round(position.coords.accuracy || 10)}m`);
+        toast.success('GPS coordinates detected');
       },
       (error) => {
         setIsDetectingLocation(false);
@@ -78,6 +80,7 @@ const ReportIssue = () => {
       const file = e.target.files[0];
       setPhotoFile(file);
       setPhotoPreview(URL.createObjectURL(file));
+      toast('Photo attached', { icon: '📸' });
     }
   };
 
@@ -91,7 +94,9 @@ const ReportIssue = () => {
     setErrorMessage('');
 
     if (!description.trim()) {
-      setErrorMessage('Please describe the hazard or condition.');
+      const msg = 'Please describe the hazard or condition.';
+      setErrorMessage(msg);
+      toast.error(msg);
       return;
     }
 
@@ -114,9 +119,12 @@ const ReportIssue = () => {
 
       setIsSubmitting(false);
       setSubmitSuccess(true);
+      toast.success('Hazard report submitted to municipal arborists!');
     } catch (err) {
       setIsSubmitting(false);
-      setErrorMessage(err.response?.data?.message || 'Failed to submit report. Please try again.');
+      const errText = err.response?.data?.message || 'Failed to submit report. Please try again.';
+      setErrorMessage(errText);
+      toast.error(errText);
     }
   };
 

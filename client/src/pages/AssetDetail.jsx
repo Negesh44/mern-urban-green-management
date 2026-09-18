@@ -23,6 +23,7 @@ import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import AssetFormModal from '../components/AssetFormModal';
 import 'leaflet/dist/leaflet.css';
+import toast from 'react-hot-toast';
 
 const detailPinIcon = L.divIcon({
   html: `
@@ -60,13 +61,13 @@ const AssetDetail = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // Maintenance Log Form State
+  const [isLoggingMaintenance, setIsLoggingMaintenance] = useState(false);
   const [maintenanceForm, setMaintenanceForm] = useState({
     action: '',
     performedBy: '',
     date: new Date().toISOString().split('T')[0],
     notes: '',
   });
-  const [isLoggingMaintenance, setIsLoggingMaintenance] = useState(false);
   const [maintenanceSuccessMsg, setMaintenanceSuccessMsg] = useState('');
   const [maintenanceErrorMsg, setMaintenanceErrorMsg] = useState('');
 
@@ -96,7 +97,9 @@ const AssetDetail = () => {
     setMaintenanceSuccessMsg('');
 
     if (!maintenanceForm.action || !maintenanceForm.performedBy) {
-      setMaintenanceErrorMsg('Action and Performed By are required fields.');
+      const msg = 'Action and Performed By are required fields.';
+      setMaintenanceErrorMsg(msg);
+      toast.error(msg);
       return;
     }
 
@@ -108,6 +111,7 @@ const AssetDetail = () => {
       });
 
       setMaintenanceSuccessMsg('Maintenance record logged successfully!');
+      toast.success('Maintenance record logged successfully!');
       setMaintenanceForm({
         action: '',
         performedBy: '',
@@ -119,29 +123,30 @@ const AssetDetail = () => {
       setAsset((prev) => ({
         ...prev,
         maintenanceHistory: [res.data.data, ...(prev.maintenanceHistory || [])],
-        maintenanceCount: (prev.maintenanceCount || 0) + 1,
       }));
 
       setIsLoggingMaintenance(false);
-      setTimeout(() => setMaintenanceSuccessMsg(''), 4000);
     } catch (err) {
       setIsLoggingMaintenance(false);
-      setMaintenanceErrorMsg(err.response?.data?.message || 'Failed to add maintenance log');
+      const errMsg = err.response?.data?.message || 'Failed to record maintenance task';
+      setMaintenanceErrorMsg(errMsg);
+      toast.error(errMsg);
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm(`Are you sure you want to delete "${asset.name}"? This cannot be undone.`)) {
+  const handleDeleteAsset = async () => {
+    if (!window.confirm(`Are you sure you want to delete "${asset.name}"? This action cannot be undone.`)) {
       return;
     }
 
     setIsDeleting(true);
     try {
       await API.delete(`/api/assets/${id}`);
+      toast.success(`Asset "${asset.name}" removed from inventory`);
       navigate(isAdmin ? '/admin/dashboard' : '/citizen/dashboard');
     } catch (err) {
       setIsDeleting(false);
-      alert(err.response?.data?.message || 'Failed to delete asset');
+      toast.error(err.response?.data?.message || 'Failed to delete asset');
     }
   };
 

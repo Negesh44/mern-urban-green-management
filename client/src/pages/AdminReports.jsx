@@ -91,6 +91,7 @@ const AdminReports = () => {
     } catch (err) {
       console.error('Failed to load reports data', err);
       setLoading(false);
+      toast.error('Failed to load citizen reports');
     }
   };
 
@@ -100,8 +101,9 @@ const AdminReports = () => {
       setReports((prev) =>
         prev.map((r) => (r._id === reportId ? { ...r, status: newStatus } : r))
       );
+      toast.success(`Report status changed to "${newStatus}"`);
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to update report status');
+      toast.error(err.response?.data?.message || 'Failed to update report status');
     }
   };
 
@@ -122,7 +124,9 @@ const AdminReports = () => {
   const handleConvertSubmit = async (e) => {
     e.preventDefault();
     if (!convertForm.assetId) {
-      setConvertErrorMsg('Please select a green asset to link this maintenance task.');
+      const msg = 'Please select a green asset to link this maintenance task.';
+      setConvertErrorMsg(msg);
+      toast.error(msg);
       return;
     }
 
@@ -132,6 +136,7 @@ const AdminReports = () => {
       const res = await API.post(`/api/reports/${convertingReport._id}/convert`, convertForm);
       setIsConverting(false);
       setConvertSuccessMsg('Converted to maintenance task!');
+      toast.success('Incident successfully converted to Maintenance Task!');
 
       // Update report in state
       setReports((prev) =>
