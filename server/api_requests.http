@@ -147,3 +147,17 @@ Content-Type: application/json
   "action": "Unauthorized Prune",
   "performedBy": "Resident"
 }
+
+
+### =======================================================
+### DASHBOARD & ANALYTICS API (Admin Only)
+### =======================================================
+
+### 16. Get Aggregated Executive Dashboard & KPI Telemetry
+GET {{baseUrl}}/dashboard/summary
+Authorization: Bearer {{adminToken}}
+
+### 17. Citizen Attempt to Access Dashboard Summary (Should return 403 Forbidden)
+GET {{baseUrl}}/dashboard/summary
+Authorization: Bearer {{citizenToken}}
+
