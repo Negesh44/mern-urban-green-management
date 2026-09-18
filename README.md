@@ -244,5 +244,25 @@ cd client && npm run build
 
 ---
 
+## 🚀 Deployment on Vercel
+
+The application is fully pre-configured for **1-Click Full-Stack Deployment on Vercel**:
+- **Frontend SPA**: Built via Vite into `client/dist` and served via Vercel Edge CDN.
+- **Backend API**: Express REST API executed as a Serverless Function via `api/index.js` routed to `/api/*`.
+- **SPA Rewrites**: Pre-configured in `vercel.json` and `client/vercel.json` to prevent 404s on route refresh.
+
+### Quick Setup Steps:
+1. Push your repository to GitHub: `https://github.com/Negesh44/mern-urban-green-management`.
+2. In [Vercel Dashboard](https://vercel.com/new), import your repository.
+3. Configure the following **Environment Variables** in Vercel:
+   - `MONGO_URI`: Your MongoDB Atlas cluster connection string (`mongodb+srv://...`).
+   - `JWT_SECRET`: A secure signing key.
+   - `NODE_ENV`: `production`.
+4. Click **Deploy**.
+
+For detailed setup instructions, including MongoDB Atlas free cluster creation and database seeding, refer to the full **[Vercel Deployment Guide](./VERCEL_DEPLOYMENT_GUIDE.md)**.
+
+---
+
 ## 📄 License
 This project is licensed under the ISC License.
