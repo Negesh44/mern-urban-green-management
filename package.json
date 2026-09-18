@@ -1,0 +1,14 @@
+{
+  "name": "smart-urban-green-management-system",
+  "version": "1.0.0",
+  "description": "Smart Urban Green Management System - MERN Stack",
+  "scripts": {
+    "server": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "install-all": "npm --prefix server install && npm --prefix client install"
+  },
+  "keywords": ["mern", "urban-green", "iot", "gis", "react", "express", "mongodb"],
+  "author": "",
+  "license": "ISC"
+}
