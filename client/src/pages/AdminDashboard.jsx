@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import {
   ResponsiveContainer,
   PieChart,
@@ -43,8 +43,12 @@ import AssetMap from '../components/AssetMap';
 import AssetFormModal from '../components/AssetFormModal';
 
 const AdminDashboard = () => {
-  // Navigation tab: 'analytics' (default landing), 'inventory', 'map'
-  const [activeTab, setActiveTab] = useState('analytics');
+  // Navigation tab from URL search parameters: 'analytics' (default), 'inventory', 'map', 'attention'
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'analytics';
+  const setActiveTab = (tab) => {
+    setSearchParams({ tab });
+  };
 
   // Summary and Asset state
   const [summaryData, setSummaryData] = useState(null);
@@ -98,10 +102,11 @@ const AdminDashboard = () => {
     try {
       await API.delete(`/api/assets/${id}`);
       setAssets((prev) => prev.filter((a) => a._id !== id));
+      toast.success(`Asset "${name}" deleted successfully`);
       // Refresh summary to reflect deletion
       fetchDashboardData();
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to delete asset');
+      toast.error(err.response?.data?.message || 'Failed to delete asset');
     }
   };
 
@@ -123,6 +128,7 @@ const AdminDashboard = () => {
       }
       return [savedAsset, ...prev];
     });
+    toast.success(`Asset "${savedAsset.name}" saved successfully`);
     fetchDashboardData();
   };
 
@@ -353,6 +359,18 @@ const AdminDashboard = () => {
         >
           <MapIcon className="w-4 h-4 text-cyan-400" />
           <span>GIS Spatial Map</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('attention')}
+          className={`px-4 py-2.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
+            activeTab === 'attention'
+              ? 'bg-slate-900 text-amber-400 border border-amber-800/80 shadow-md shadow-amber-950/40'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/40'
+          }`}
+        >
+          <Wrench className="w-4 h-4 text-amber-400" />
+          <span>Needs Attention ({filteredNeedsAttention.length})</span>
         </button>
       </div>
 
@@ -826,6 +844,172 @@ const AdminDashboard = () => {
                   Showing top 10 urgent items of {filteredNeedsAttention.length} flagged assets.
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* VIEW 4: Dedicated Maintenance / Needs Attention View */}
+      {activeTab === 'attention' && (
+        <div className="space-y-6 animate-fadeIn">
+          <div className="p-6 rounded-2xl bg-slate-900/90 border border-amber-900/40 shadow-xl space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+              <div>
+                <div className="flex items-center gap-2 text-amber-400 font-bold text-base">
+                  <Wrench className="w-5 h-5" />
+                  <span>Arboricultural Maintenance Overdue & Attention List</span>
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Assets with no recorded maintenance log in the last 6 months, or exhibiting phytosanitary distress.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-1 rounded-full bg-amber-950/80 text-amber-300 border border-amber-800/80 text-xs font-bold font-mono">
+                  {filteredNeedsAttention.length} Urgent Items
+                </span>
+              </div>
+            </div>
+
+            {/* Filter / Search for Attention List */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="relative w-full sm:w-72">
+                <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <input
+                  type="text"
+                  placeholder="Filter attention list..."
+                  value={attentionSearch}
+                  onChange={(e) => setAttentionSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <select
+                  value={attentionTypeFilter}
+                  onChange={(e) => setAttentionTypeFilter(e.target.value)}
+                  className="px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-300 text-xs focus:outline-none focus:border-amber-500 cursor-pointer"
+                >
+                  <option value="all">All Classifications</option>
+                  <option value="tree">Trees</option>
+                  <option value="park">Parks</option>
+                  <option value="urban_forest">Urban Forests</option>
+                  <option value="green_belt">Green Belts</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Full Attention Table */}
+            <div className="rounded-xl border border-slate-800 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-slate-300">
+                  <thead className="bg-slate-950/80 uppercase text-[10px] tracking-wider text-slate-400 border-b border-slate-800">
+                    <tr>
+                      <th scope="col" className="px-4 py-3">Asset Identifier</th>
+                      <th scope="col" className="px-3 py-3">Type</th>
+                      <th scope="col" className="px-3 py-3">Condition</th>
+                      <th scope="col" className="px-3 py-3">Last Maintenance</th>
+                      <th scope="col" className="px-3 py-3">Total Logs</th>
+                      <th scope="col" className="px-4 py-3 text-right">Quick Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60">
+                    {filteredNeedsAttention.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="text-center py-8 text-slate-500">
+                          <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto mb-1.5 opacity-80" />
+                          No assets currently overdue for maintenance!
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredNeedsAttention.map((asset) => {
+                        const hasNeverBeenMaintained = !asset.lastMaintenanceDate;
+                        const lastDateFormatted = hasNeverBeenMaintained
+                          ? 'Never Maintained'
+                          : new Date(asset.lastMaintenanceDate).toLocaleDateString('en-GB', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                            });
+
+                        return (
+                          <tr key={asset._id} className="hover:bg-slate-800/30 transition-colors">
+                            <td className="px-4 py-3">
+                              <Link
+                                to={`/assets/${asset._id}`}
+                                className="font-semibold text-slate-200 hover:text-emerald-400 transition-colors block"
+                              >
+                                {asset.name}
+                              </Link>
+                              <div className="text-[11px] text-slate-500">
+                                {asset.species || (asset.type ? asset.type.replace('_', ' ') : 'General Asset')}
+                              </div>
+                            </td>
+
+                            <td className="px-3 py-3">
+                              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-950 text-slate-400 border border-slate-800">
+                                {asset.type.replace('_', ' ')}
+                              </span>
+                            </td>
+
+                            <td className="px-3 py-3">
+                              <span
+                                className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                                  asset.healthStatus === 'Healthy'
+                                    ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                                    : asset.healthStatus === 'Diseased'
+                                    ? 'bg-amber-950 text-amber-300 border border-amber-800'
+                                    : 'bg-rose-950 text-rose-300 border border-rose-800'
+                                }`}
+                              >
+                                {asset.healthStatus}
+                              </span>
+                            </td>
+
+                            <td className="px-3 py-3 font-mono">
+                              <span
+                                className={`text-xs ${
+                                  hasNeverBeenMaintained
+                                    ? 'text-rose-400 font-semibold'
+                                    : 'text-amber-400 font-medium'
+                                }`}
+                              >
+                                {lastDateFormatted}
+                              </span>
+                            </td>
+
+                            <td className="px-3 py-3 font-mono text-slate-400">
+                              {asset.logsCount ?? 0}
+                            </td>
+
+                            <td className="px-4 py-3 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <Link
+                                  to={`/assets/${asset._id}`}
+                                  className="px-2.5 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-colors flex items-center gap-1 text-[11px] font-medium"
+                                  title="Inspect Asset"
+                                >
+                                  <Eye className="w-3 h-3 text-teal-400" />
+                                  <span>Inspect</span>
+                                </Link>
+
+                                <Link
+                                  to={`/assets/${asset._id}`}
+                                  className="px-2.5 py-1 rounded-lg bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 transition-colors flex items-center gap-1 text-[11px] font-medium"
+                                  title="Add Maintenance Log"
+                                >
+                                  <Wrench className="w-3 h-3 text-emerald-400" />
+                                  <span>Log Task</span>
+                                </Link>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
