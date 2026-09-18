@@ -36,11 +36,7 @@ The repository is pre-configured with **Vercel Monorepo Serverless Support**:
    - Click **Add IP Address**.
    - Select **Allow Access from Anywhere** (`0.0.0.0/0`) so Vercel's dynamic serverless IPs can connect.
 5. In your cluster dashboard, click **Connect** -> **Drivers** (Node.js).
-6. Copy your connection string:
-   ```text
-   mongodb+srv://urbangreen_admin:<password>@cluster0.abcde.mongodb.net/smart_urban_green?retryWrites=true&w=majority
-   ```
-   *(Replace `<password>` with your actual password and ensure the database name is `smart_urban_green`)*.
+6. Copy your connection string provided by MongoDB Atlas (example format: `mongodb+srv://<USERNAME>:<PASSWORD>@<CLUSTER>.mongodb.net/<DB_NAME>?retryWrites=true&w=majority`).
 
 ---
 
@@ -50,8 +46,8 @@ Before or right after deploying, seed your MongoDB Atlas cluster with the initia
 
 In your local terminal:
 ```bash
-# Windows PowerShell
-$env:MONGO_URI="mongodb+srv://urbangreen_admin:YOUR_PASSWORD@cluster0.abcde.mongodb.net/smart_urban_green?retryWrites=true&w=majority"
+# Windows PowerShell (paste your actual MongoDB Atlas connection string)
+$env:MONGO_URI="<YOUR_MONGODB_ATLAS_CONNECTION_STRING>"
 npm run seed
 ```
 
@@ -77,7 +73,7 @@ This populates:
 
 | Name | Value | Description |
 | :--- | :--- | :--- |
-| `MONGO_URI` | `mongodb+srv://urbangreen_admin:...@cluster0.../smart_urban_green?retryWrites=true&w=majority` | Your MongoDB Atlas connection string |
+| `MONGO_URI` | `<YOUR_MONGODB_ATLAS_CONNECTION_STRING>` | Your MongoDB Atlas connection string |
 | `JWT_SECRET` | `urban_green_jwt_production_secret_key_2026_x89` | Strong secret key for JWT signing |
 | `NODE_ENV` | `production` | Production environment flag |
 

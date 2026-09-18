@@ -255,7 +255,7 @@ The application is fully pre-configured for **1-Click Full-Stack Deployment on V
 1. Push your repository to GitHub: `https://github.com/Negesh44/mern-urban-green-management`.
 2. In [Vercel Dashboard](https://vercel.com/new), import your repository.
 3. Configure the following **Environment Variables** in Vercel:
-   - `MONGO_URI`: Your MongoDB Atlas cluster connection string (`mongodb+srv://...`).
+   - `MONGO_URI`: Your MongoDB Atlas cluster connection string (obtained from Atlas dashboard).
    - `JWT_SECRET`: A secure signing key.
    - `NODE_ENV`: `production`.
 4. Click **Deploy**.
