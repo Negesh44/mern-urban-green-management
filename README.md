@@ -1,39 +1,47 @@
-# mern-urban-green-management
+# Smart Urban Green Management System
 
-> **Smart Urban Green Management System** — A full-stack MERN platform for municipal green asset tracking, interactive GIS canopy mapping, maintenance work orders, and citizen environmental hazard reporting.
+> **Abstract:** MERN-stack web application for centralized urban green-space management with interactive mapping, environmental KPIs, and citizen reporting.
 
----
-
-## 🌿 Overview
-
-Smart Urban Green Management System provides a comprehensive digital platform for urban ecological stewardship. It bridges municipal green infrastructure management with active citizen participation.
-
-### Key Capabilities
-- **Interactive GIS Mapping**: Leaflet & React-Leaflet powered spatial map of all catalogued urban assets with custom health status color-coding.
-- **Green Asset Inventory**: Track taxonomy, estimated age, dimensions, condition, planting date, and coordinate telemetry for trees, parks, urban forests, and linear green belts.
-- **Maintenance & Work Orders**: Log arboricultural maintenance activities (pruning, irrigation, pest remediation) with chronological history tracking.
-- **Citizen Hazard Reporting**: Citizens report fallen limbs, tree diseases, and infrastructure hazards with auto-detected GPS coordinates and photos.
-- **Admin Triage & Conversion**: Municipal administrators triage incident alerts, update statuses, and convert hazard reports into maintenance tasks.
-- **Role-Based Access Control (RBAC)**: Secure JWT authentication with distinct access policies for Citizens and Municipal Admins.
+[![Build Status](https://img.shields.io/badge/Build-Passing-emerald)](https://github.com/Negesh44/mern-urban-green-management)
+[![MERN Stack](https://img.shields.io/badge/Stack-MongoDB%20%7C%20Express%20%7C%20React%20%7C%20Node-teal)](https://github.com/Negesh44/mern-urban-green-management)
+[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-v4.3-38bdf8)](https://tailwindcss.com/)
+[![Leaflet GIS](https://img.shields.io/badge/GIS-Leaflet%20%2B%20React--Leaflet-green)](https://leafletjs.com/)
+[![License](https://img.shields.io/badge/License-ISC-blue)](LICENSE)
 
 ---
 
-## 🏗️ Architecture & Tech Stack
+## 🌿 Project Overview
+
+The **Smart Urban Green Management System** is an enterprise-grade civic platform designed for municipal governments, urban arborists, and citizens. It centralizes ecological stewardship by pairing spatial GIS tracking of municipal botanical assets with real-time phytosanitary telemetry, automated work order triage, and community environmental hazard reporting.
+
+### Core Capabilities
+- **Interactive GIS Mapping**: Spatial visualization of urban trees, municipal parks, urban forests, and linear green corridors powered by Leaflet and OpenStreetMap tiles with status-coded marker pins.
+- **Executive Analytics & Environmental KPIs**: Administrative dashboard powered by Recharts with donut charts for tree health ratios, bar charts for asset categorization, and chronological canopy survival curves.
+- **Green Asset Inventory & Registry**: Comprehensive registry recording botanical taxonomy, species, estimated age, area, condition, planting history, and GPS coordinates.
+- **Citizen Hazard Reporting**: Citizens submit geo-tagged incident reports with auto-detected GPS coordinates, photo uploads via Multer, and transparent resolution tracking.
+- **Maintenance & Work Orders**: Arborists schedule pruning, soil aeration, and pest remediation. Admins convert citizen hazard reports directly into asset maintenance tasks.
+- **Dual Navigation Experience**: Dedicated collapsible **Admin Sidebar** (`Dashboard`, `Assets`, `Reports`, `Maintenance`) for municipal officials, and an intuitive **Top Navigation Bar** (`Green Map`, `Report Hazard`, `My Reports`) for citizens.
+- **Role-Based Access Control (RBAC)**: Secure JWT authentication with distinct access policies for Citizens and Municipal Administrators.
+
+---
+
+## 🏗️ Technology Stack
 
 ### Frontend (`/client`)
-- **Framework**: React 19 + Vite 8
-- **Styling**: Tailwind CSS v4 + Lucide React Icons
-- **Mapping & GIS**: Leaflet, React-Leaflet, OpenStreetMap Tiles
-- **Charts & Telemetry**: Recharts
-- **HTTP Client**: Axios with centralized request/response JWT interceptors
+- **Core**: React 19, Vite 8
+- **Styling**: Tailwind CSS v4, Lucide React Icons
+- **GIS & Mapping**: Leaflet v1.9, React-Leaflet v5, OpenStreetMap
+- **Visualizations**: Recharts v3.10 (Donut/Pie, Bar, and Spline Area charts)
+- **Feedback & Notifications**: `react-hot-toast` with custom dark eco theme
+- **HTTP Client**: Axios with centralized JWT interceptors
 - **Routing**: React Router v7 with protected routes
 
 ### Backend (`/server`)
-- **Runtime & Framework**: Node.js + Express.js
+- **Runtime & Framework**: Node.js, Express.js
 - **Database**: MongoDB with Mongoose ODM (embedded persistent storage support)
-- **Authentication**: JWT (JSON Web Tokens) + Bcrypt.js password hashing
-- **File Uploads**: Multer disk storage for canopy imagery and incident photos
-- **Security**: CORS, role-based authorization middleware
+- **Authentication**: JWT (JSON Web Tokens) with HTTP Bearer strategy + Bcrypt.js password hashing
+- **File Storage**: Multer disk storage for canopy imagery and incident photos
+- **Security & Middleware**: CORS, role-based authorization guards, error handler
 
 ---
 
@@ -43,129 +51,198 @@ Smart Urban Green Management System provides a comprehensive digital platform fo
 mern-urban-green-management/
 ├── package.json                   # Workspace orchestration scripts
 ├── .gitignore                     # Git exclusion rules
-├── README.md                      # Documentation
+├── README.md                      # Comprehensive project documentation
 ├── client/                        # React Frontend (Vite)
 │   ├── index.html
-│   ├── vite.config.js
+│   ├── vite.config.js             # Dev server config (Port 5180 with /api proxy)
 │   └── src/
-│       ├── App.jsx                # Router configuration
-│       ├── main.jsx               # Entry point with BrowserRouter
-│       ├── index.css              # Tailwind CSS & Leaflet styles
+│       ├── App.jsx                # Router configuration & Toast provider
+│       ├── main.jsx               # React DOM entry point
+│       ├── index.css              # Tailwind CSS & Leaflet map styling
 │       ├── components/
-│       │   ├── AssetMap.jsx       # Interactive GIS map with color-coded markers
-│       │   ├── LocationPickerMap.jsx # Click-to-pin mini-map
-│       │   ├── AssetFormModal.jsx # Add/Edit modal with image upload
-│       │   ├── Navbar.jsx         # Contextual navigation
-│       │   ├── Layout.jsx         # App shell
-│       │   └── ProtectedRoute.jsx # RBAC route guard
+│       │   ├── AdminSidebar.jsx   # Dedicated executive admin sidebar
+│       │   ├── Navbar.jsx         # Responsive citizen/guest top navigation
+│       │   ├── Layout.jsx         # Dual navigation shell
+│       │   ├── AssetMap.jsx       # Interactive GIS canopy map
+│       │   ├── LocationPickerMap.jsx # Click-to-pin coordinate picker
+│       │   ├── AssetFormModal.jsx # Add/Edit asset modal with photo upload
+│       │   └── ProtectedRoute.jsx # Role-based route guard
 │       ├── context/
-│       │   └── AuthContext.jsx    # Session & auth state provider
+│       │   └── AuthContext.jsx    # Session & JWT token provider
 │       ├── pages/
-│       │   ├── Landing.jsx        # Landing page
+│       │   ├── Landing.jsx        # Public hero page with abstract & CTAs
 │       │   ├── Login.jsx          # Login with 1-click test credentials
-│       │   ├── Signup.jsx         # Registration with role selection
-│       │   ├── AdminDashboard.jsx # Admin asset table, map & analytics
-│       │   ├── AdminReports.jsx   # Admin incident triage & maintenance dispatch
-│       │   ├── CitizenDashboard.jsx # Citizen view & nearby reserves
-│       │   ├── AssetDetail.jsx    # Asset view & maintenance history
+│       │   ├── Signup.jsx         # User registration with role selection
+│       │   ├── AdminDashboard.jsx # Executive KPI dashboard, inventory & charts
+│       │   ├── AdminReports.jsx   # Incident triage & work order conversion
+│       │   ├── CitizenDashboard.jsx # Public canopy map & nearby green reserves
+│       │   ├── AssetDetail.jsx    # Asset telemetry & maintenance history
 │       │   ├── ReportIssue.jsx    # Hazard reporting with geolocation
-│       │   └── MyReports.jsx      # Citizen report tracking
+│       │   └── MyReports.jsx      # Citizen personal report tracker
 │       └── services/
-│           └── api.js             # Centralized Axios instance
+│           └── api.js             # Centralized Axios client
 └── server/                        # Node.js Express Backend
-    ├── server.js                  # App entry point
+    ├── server.js                  # Express application entry point (Port 5000)
     ├── seed.js                    # Database seeder (22 assets, logs, reports)
-    ├── api_requests.http          # HTTP REST client collection
+    ├── api_requests.http          # REST client specification collection
     ├── config/
-    │   └── db.js                  # MongoDB connection handler
+    │   └── db.js                  # MongoDB connection handler & fallback
     ├── controllers/
     │   ├── authController.js      # Signup, login, me
     │   ├── assetController.js     # Asset CRUD & query filters
-    │   ├── maintenanceController.js # Maintenance logs
+    │   ├── maintenanceController.js # Maintenance logs & work orders
     │   ├── reportController.js    # Citizen reporting & task conversion
-    │   └── dashboardController.js # Executive KPIs & analytics aggregation
+    │   └── dashboardController.js # Aggregated KPIs, charts & attention alerts
     ├── middleware/
-    │   ├── authMiddleware.js      # JWT verification
+    │   ├── authMiddleware.js      # JWT verification guard
     │   ├── roleMiddleware.js      # Role restriction (Admin vs. Citizen)
     │   └── uploadMiddleware.js    # Multer file upload handler
     ├── models/
-    │   ├── User.js                # User schema
-    │   ├── Asset.js               # Asset schema (tree, park, forest, belt)
+    │   ├── User.js                # User account schema (admin / citizen)
+    │   ├── Asset.js               # Green asset schema (tree, park, forest, belt)
     │   ├── MaintenanceLog.js      # Maintenance log schema
-    │   └── Report.js              # Incident report schema
+    │   └── Report.js              # Incident hazard report schema
     ├── routes/
     │   ├── authRoutes.js
     │   ├── assetRoutes.js
     │   ├── maintenanceRoutes.js
     │   ├── reportRoutes.js
-    │   └── dashboardRoutes.js     # Executive dashboard & KPI endpoints
+    │   └── dashboardRoutes.js     # Executive dashboard summary route
     └── tests/
         ├── api_test.js            # Asset & Maintenance test suite
         ├── report_test.js         # Citizen reporting test suite
-        └── dashboard_test.js      # Dashboard & KPI aggregation test suite
+        └── dashboard_test.js      # Executive dashboard & KPI test suite
 ```
 
 ---
 
-## 📊 Key Dashboard & KPI Metrics
-- **Executive Summary Cards**: Total Trees, Parks/Reserves, Total Green Area ($m^2$ & Ha), and Pending Citizen Reports.
-- **Tree Health Distribution (Pie Chart)**: Phytosanitary condition breakdown (Healthy, Diseased, Dead) with interactive Recharts donut visualization.
-- **Classification Inventory (Bar Chart)**: Spatial asset tallies across trees, parks, urban forests, and linear green corridors.
-- **Canopy Survival Rate Trend (Area Chart)**: Chronological survival and vitality tracking across planting cohorts.
-- **Needs Attention Triage**: Automatically flags assets overdue for maintenance (>6 months since last work order) or in phytosanitary distress with 1-click action links.
+## 🚀 Setup & Installation Guide
 
----
-
-## 🚀 Getting Started
-
-### 1. Prerequisites
-- Node.js (v18+)
-- npm (v9+)
-
-### 2. Installation
+### 1. Clone the Repository
 ```bash
-# Clone the repository
 git clone https://github.com/Negesh44/mern-urban-green-management.git
 cd mern-urban-green-management
+```
 
-# Install backend dependencies
+### 2. Install Dependencies
+```bash
+# Install root orchestration dependencies
+npm install
+
+# Install server dependencies
 cd server
 npm install
 
-# Install frontend dependencies
+# Install client dependencies
 cd ../client
 npm install
+cd ..
 ```
 
-### 3. Seed Database
+### 3. Environment Variables Configuration
+In the `server/` directory, create a `.env` file (referencing `.env.example`):
+```env
+PORT=5000
+MONGO_URI=mongodb://127.0.0.1:27017/smart_urban_green
+JWT_SECRET=super_secret_urban_green_jwt_key_2026_production
+JWT_EXPIRE=30d
+```
+
+### 4. Seed the Database
+Populates 22 botanical assets (trees, parks, urban forests, green belts), 5 maintenance logs, 3 citizen reports, and default test accounts:
 ```bash
-cd ../server
+cd server
 node seed.js
+cd ..
 ```
 
-### 4. Running the Application
-In separate terminal windows:
+### 5. Start Both Applications
+Open two terminal windows:
 
+**Terminal 1 — Backend Server:**
 ```bash
-# Start Backend (runs on http://localhost:5000)
 cd server
 npm run dev
+# Running on http://localhost:5000
+```
 
-# Start Frontend (runs on http://localhost:5173)
+**Terminal 2 — Frontend Application:**
+```bash
 cd client
 npm run dev
+# Running on http://localhost:5180
 ```
 
 ---
 
-## 🔑 Default Test Accounts
+## 🔑 Demonstration & Evaluation Accounts
 
-| Role | Email | Password | Access |
+The database includes pre-configured accounts for testing with 1-click Quick-Fill buttons on the Login page:
+
+| Role | Email | Password | Access Privileges |
 | :--- | :--- | :--- | :--- |
-| **Admin** | `admin@citygreen.gov` | `Admin@123` | Full Admin Operations, Asset CRUD, Incident Triage, Work Order Conversion |
-| **Citizen** | `citizen@citygreen.gov` | `Citizen@123` | Citizen Map, Report Hazards, Track My Reports |
+| **Municipal Admin** | `admin@citygreen.gov` | `Admin@123` | Executive KPI Dashboard, Asset CRUD, Incident Triage, Work Order Conversion |
+| **Community Citizen** | `citizen@citygreen.gov` | `Citizen@123` | Interactive Green Map, Report Hazards (GPS + Photo), Track My Reports |
+
+---
+
+## 📡 Complete REST API Route Summary
+
+### Authentication (`/api/auth`)
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/signup` | Public | Register new citizen or administrator account |
+| `POST` | `/api/auth/login` | Public | Authenticate user, return signed JWT and profile |
+| `GET` | `/api/auth/me` | Private | Retrieve authenticated session profile |
+
+### Assets Management (`/api/assets`)
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/assets` | Private | Retrieve all assets (supports `?type=`, `?healthStatus=`, `?search=`) |
+| `GET` | `/api/assets/:id` | Private | Retrieve single asset with populated maintenance history |
+| `POST` | `/api/assets` | Admin | Create green asset (supports Multer image uploads) |
+| `PUT` | `/api/assets/:id` | Admin | Update asset attributes, dimensions, or condition |
+| `DELETE` | `/api/assets/:id` | Admin | Delete asset and cascade remove associated logs |
+
+### Arboricultural Maintenance (`/api/maintenance`)
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/maintenance/:assetId` | Private | Retrieve chronological maintenance history for asset |
+| `POST` | `/api/maintenance` | Admin | Log arboricultural activity (pruning, irrigation, spraying) |
+
+### Citizen Incident Reporting (`/api/reports`)
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/reports` | Citizen | Submit hazard report with GPS coords and photo upload |
+| `GET` | `/api/reports` | Private | Citizen views own reports; Admin views all municipal reports |
+| `PUT` | `/api/reports/:id` | Admin | Update status (`Pending`, `In Progress`, `Resolved`) |
+| `POST` | `/api/reports/:id/convert` | Admin | Convert incident report directly into an asset maintenance task |
+
+### Executive Analytics & KPIs (`/api/dashboard`)
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/dashboard/summary` | Admin | Aggregated metrics: assets by type, health ratios, green area, pending reports, 6-month overdue maintenance, and survival trends |
+
+---
+
+## 🧪 Automated Verification Suite
+
+Run the end-to-end integration test suites:
+```bash
+# 1. Asset & Maintenance CRUD Test Suite (12 tests)
+node server/tests/api_test.js
+
+# 2. Citizen Reporting & Task Conversion Test Suite (9 tests)
+node server/tests/report_test.js
+
+# 3. Executive Dashboard & KPI Aggregation Test Suite
+node server/tests/dashboard_test.js
+
+# 4. Frontend Production Build Check
+cd client && npm run build
+```
 
 ---
 
 ## 📄 License
-ISC
+This project is licensed under the ISC License.
