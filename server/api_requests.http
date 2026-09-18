@@ -1,0 +1,149 @@
+### =======================================================
+### Smart Urban Green Management System - API Requests
+### =======================================================
+
+@baseUrl = http://localhost:5000/api
+
+### 1. Authenticate as Admin
+# @name adminLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@citygreen.gov",
+  "password": "Admin@123"
+}
+
+### Store token from admin login response
+@adminToken = {{adminLogin.response.body.token}}
+
+### 2. Authenticate as Citizen
+# @name citizenLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "citizen@citygreen.gov",
+  "password": "Citizen@123"
+}
+
+### Store token from citizen login response
+@citizenToken = {{citizenLogin.response.body.token}}
+
+
+### =======================================================
+### ASSETS API (Protected: All Authenticated Read)
+### =======================================================
+
+### 3. Get All Assets
+GET {{baseUrl}}/assets
+Authorization: Bearer {{citizenToken}}
+
+### 4. Filter Assets by Type (Trees)
+GET {{baseUrl}}/assets?type=tree
+Authorization: Bearer {{citizenToken}}
+
+### 5. Filter Assets by Health Status (Diseased Trees)
+GET {{baseUrl}}/assets?type=tree&healthStatus=Diseased
+Authorization: Bearer {{citizenToken}}
+
+### 6. Filter Assets by Parks
+GET {{baseUrl}}/assets?type=park
+Authorization: Bearer {{citizenToken}}
+
+### 7. Search Assets by Keyword
+GET {{baseUrl}}/assets?search=Neem
+Authorization: Bearer {{citizenToken}}
+
+### 8. Get Single Asset by ID (Replace with valid ID)
+# @name getSingleAsset
+GET {{baseUrl}}/assets/6aacca1dd7e3c96eddce46bd
+Authorization: Bearer {{citizenToken}}
+
+
+### =======================================================
+### ASSETS WRITE API (Admin Only)
+### =======================================================
+
+### 9. Create New Asset (Admin)
+# @name createAsset
+POST {{baseUrl}}/assets
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "type": "tree",
+  "name": "Heritage Chinar Tree #50",
+  "species": "Platanus orientalis (Chinar)",
+  "age": 35,
+  "healthStatus": "Healthy",
+  "location": {
+    "lat": 28.6189,
+    "lng": 77.2185
+  },
+  "description": "Majestic deciduous broadleaf tree with expansive crown.",
+  "plantingDate": "1991-04-12",
+  "images": [
+    "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=800"
+  ]
+}
+
+@newAssetId = {{createAsset.response.body.data._id}}
+
+### 10. Attempt Asset Creation as Citizen (Should return 403 Forbidden)
+POST {{baseUrl}}/assets
+Authorization: Bearer {{citizenToken}}
+Content-Type: application/json
+
+{
+  "type": "tree",
+  "name": "Unauthorized Community Tree",
+  "location": { "lat": 28.62, "lng": 77.21 }
+}
+
+### 11. Update Asset (Admin)
+PUT {{baseUrl}}/assets/{{newAssetId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "healthStatus": "Diseased",
+  "description": "Noticed foliar chlorosis on eastern crown branches."
+}
+
+### 12. Delete Asset (Admin)
+DELETE {{baseUrl}}/assets/{{newAssetId}}
+Authorization: Bearer {{adminToken}}
+
+
+### =======================================================
+### MAINTENANCE LOGS API
+### =======================================================
+
+### 13. Create Maintenance Log for Asset (Admin)
+POST {{baseUrl}}/maintenance
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "assetId": "6aacca1dd7e3c96eddce46bd",
+  "action": "Canopy Thinning & Deadwood Clearance",
+  "performedBy": "Central Urban Forestry Division Unit 2",
+  "date": "2026-09-18",
+  "notes": "Thinning dense upper canopy to improve sunlight penetration and reduce wind resistance."
+}
+
+### 14. Get Maintenance Logs for an Asset
+GET {{baseUrl}}/maintenance/6aacca1dd7e3c96eddce46bd
+Authorization: Bearer {{citizenToken}}
+
+### 15. Citizen Attempt to Log Maintenance (Should return 403 Forbidden)
+POST {{baseUrl}}/maintenance
+Authorization: Bearer {{citizenToken}}
+Content-Type: application/json
+
+{
+  "assetId": "6aacca1dd7e3c96eddce46bd",
+  "action": "Unauthorized Prune",
+  "performedBy": "Resident"
+}
