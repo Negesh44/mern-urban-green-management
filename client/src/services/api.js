@@ -1,11 +1,20 @@
-import axios from 'axios';
+// Dynamically determine backend base URL:
+// 1. Explicit VITE_API_URL if configured in environment
+// 2. Relative root '' in production (for unified same-domain Vercel deployment)
+// 3. http://localhost:5000 for local development
+const getBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  return import.meta.env.PROD ? '' : 'http://localhost:5000';
+};
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  baseURL: getBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000,
+  timeout: 15000,
 });
 
 // Request interceptor to attach JWT token if present
