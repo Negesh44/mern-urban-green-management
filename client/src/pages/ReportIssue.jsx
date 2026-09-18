@@ -256,7 +256,7 @@ const ReportIssue = () => {
 
                 <button
                   type="button"
-                  onClick={autoDetectLocation}
+                  onClick={handleDetectLocation}
                   disabled={isDetectingLocation}
                   className="px-3 py-1.5 rounded-xl bg-emerald-950/80 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-800/60 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
                 >

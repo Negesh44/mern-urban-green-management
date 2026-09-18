@@ -197,7 +197,7 @@ const AssetDetail = () => {
               <span>Edit Asset</span>
             </button>
             <button
-              onClick={handleDelete}
+              onClick={handleDeleteAsset}
               disabled={isDeleting}
               className="px-4 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/60 text-rose-300 text-xs font-semibold transition-colors flex items-center gap-1.5 border border-rose-800/60 cursor-pointer disabled:opacity-50"
             >
