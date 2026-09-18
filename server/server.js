@@ -7,6 +7,7 @@ const authRoutes = require('./routes/authRoutes');
 const assetRoutes = require('./routes/assetRoutes');
 const maintenanceRoutes = require('./routes/maintenanceRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -29,6 +30,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/assets', assetRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Root Route
 app.get('/', (req, res) => {
@@ -40,6 +42,7 @@ app.get('/', (req, res) => {
       assets: '/api/assets',
       maintenance: '/api/maintenance',
       reports: '/api/reports',
+      dashboard: '/api/dashboard',
     },
     timestamp: new Date().toISOString(),
   });
