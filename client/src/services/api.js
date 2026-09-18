@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 // Dynamically determine backend base URL:
 // 1. Explicit VITE_API_URL if configured in environment
 // 2. Relative root '' in production (for unified same-domain Vercel deployment)
