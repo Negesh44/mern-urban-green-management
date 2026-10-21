@@ -56,6 +56,17 @@ const spawnLocalMongod = async () => {
   }
 };
 
+// Connection lifecycle monitoring
+mongoose.connection.on('connected', () => {
+  console.log('[MongoDB Event] Connection ready state: 1 (Connected)');
+});
+mongoose.connection.on('error', (err) => {
+  console.error('[MongoDB Event Error]', err.message);
+});
+mongoose.connection.on('disconnected', () => {
+  console.warn('[MongoDB Event] Connection lost, reconnecting...');
+});
+
 const connectDB = async () => {
   // Reuse existing connection in serverless warm invocations
   if (mongoose.connection.readyState >= 1) {

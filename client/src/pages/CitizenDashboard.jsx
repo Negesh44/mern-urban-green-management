@@ -67,7 +67,11 @@ const CitizenDashboard = () => {
         setReportText('');
       }, 5000);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to submit report. Please log in.');
+      const rawMsg = err.response?.data?.message || err.message || '';
+      const displayMsg = rawMsg.includes('buffering timed out')
+        ? 'Database was reconnecting. Please click "Submit Incident Alert" again now.'
+        : rawMsg || 'Failed to submit report. Please log in.';
+      toast.error(displayMsg);
     } finally {
       setReportSubmitting(false);
     }

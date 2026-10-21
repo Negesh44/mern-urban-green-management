@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const assetRoutes = require('./routes/assetRoutes');
@@ -21,6 +22,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Database connection readiness check (prevents 10s buffering timeouts)
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api') && req.path !== '/api/health') {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({
+        status: 'error',
+        message: 'Database is establishing connection. Please retry in a few moments.',
+      });
+    }
+  }
+  next();
+});
 
 // Serve static uploaded assets & images
 const uploadPath = process.env.VERCEL
