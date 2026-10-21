@@ -68,9 +68,12 @@ const CitizenDashboard = () => {
       }, 5000);
     } catch (err) {
       const rawMsg = err.response?.data?.message || err.message || '';
-      const displayMsg = rawMsg.includes('buffering timed out')
-        ? 'Database was reconnecting. Please click "Submit Incident Alert" again now.'
-        : rawMsg || 'Failed to submit report. Please log in.';
+      let displayMsg = rawMsg || 'Failed to submit report. Please log in.';
+      if (rawMsg.includes('timeout') || rawMsg.includes('ECONNABORTED')) {
+        displayMsg = 'Server response took longer than expected. Please click "Submit Incident Alert" again.';
+      } else if (rawMsg.includes('buffering timed out')) {
+        displayMsg = 'Database was busy. Please click "Submit Incident Alert" again now.';
+      }
       toast.error(displayMsg);
     } finally {
       setReportSubmitting(false);

@@ -31,10 +31,22 @@ API.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor for unified error handling
+// Response interceptor with unified error handling and auto-retry on brief timeouts
 API.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const config = error.config;
+    // Auto-retry once on connection timeout or momentary server restart
+    if (
+      config &&
+      !config._retry &&
+      (error.code === 'ECONNABORTED' || error.message?.includes('timeout') || !error.response)
+    ) {
+      config._retry = true;
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      return API(config);
+    }
+
     if (error.response && error.response.status === 401) {
       // Handle unauthorized (e.g., token expired)
       console.warn('Unauthorized access or session expired');
