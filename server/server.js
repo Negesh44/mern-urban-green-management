@@ -13,6 +13,9 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 // Load environment variables
 dotenv.config();
 
+// Disable buffering commands so unready connections fail fast and trigger instant memory fallbacks
+mongoose.set('bufferCommands', false);
+
 const app = express();
 
 // Middleware
