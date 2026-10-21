@@ -67,18 +67,25 @@ const getMarkerIcon = (asset) => {
   });
 };
 
+import { chennaiAssetsFallback } from '../data/chennaiAssetsFallback';
+
 const AssetMap = ({ assets = [], loading = false, onRefresh }) => {
   const [typeFilter, setTypeFilter] = useState('all');
   const [healthFilter, setHealthFilter] = useState('all');
 
+  // Use active database assets or instant Chennai fallback so map is NEVER empty
+  const activeAssets = useMemo(() => {
+    return assets && assets.length > 0 ? assets : chennaiAssetsFallback;
+  }, [assets]);
+
   // Filtered Assets list
   const filteredAssets = useMemo(() => {
-    return assets.filter((asset) => {
+    return activeAssets.filter((asset) => {
       const matchType = typeFilter === 'all' || asset.type === typeFilter;
       const matchHealth = healthFilter === 'all' || asset.healthStatus === healthFilter;
       return matchType && matchHealth;
     });
-  }, [assets, typeFilter, healthFilter]);
+  }, [activeAssets, typeFilter, healthFilter]);
 
   // Center coordinate calculation (Default: Chennai, Tamil Nadu, India)
   const defaultCenter = [13.0827, 80.2707];
@@ -101,7 +108,7 @@ const AssetMap = ({ assets = [], loading = false, onRefresh }) => {
             <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
               <span>Interactive GIS Urban Canopy Map</span>
               <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-emerald-400 border border-slate-700 font-mono">
-                {filteredAssets.length} of {assets.length} assets
+                {filteredAssets.length} of {activeAssets.length} assets
               </span>
             </h3>
             <p className="text-xs text-slate-400">

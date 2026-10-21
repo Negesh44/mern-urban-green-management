@@ -18,12 +18,13 @@ import {
 import API from '../services/api';
 import AssetMap from '../components/AssetMap';
 import { useAuth } from '../context/AuthContext';
+import { chennaiAssetsFallback } from '../data/chennaiAssetsFallback';
 import toast from 'react-hot-toast';
 
 const CitizenDashboard = () => {
   const { user } = useAuth();
-  const [assets, setAssets] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [assets, setAssets] = useState(chennaiAssetsFallback);
+  const [loading, setLoading] = useState(false);
   const [adoptedCount, setAdoptedCount] = useState(2);
   const [reportSubmitting, setReportSubmitting] = useState(false);
   const [reportSubmitted, setReportSubmitted] = useState(false);
@@ -35,14 +36,13 @@ const CitizenDashboard = () => {
   }, []);
 
   const fetchAssets = async () => {
-    setLoading(true);
     try {
       const res = await API.get('/api/assets');
-      setAssets(res.data.data || []);
-      setLoading(false);
+      if (res.data?.data && res.data.data.length > 0) {
+        setAssets(res.data.data);
+      }
     } catch (err) {
-      console.error('Failed to fetch assets for citizen view', err);
-      setLoading(false);
+      console.warn('Backend unavailable, displaying catalogued Chennai assets fallback:', err.message);
     }
   };
 

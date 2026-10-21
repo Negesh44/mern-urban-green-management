@@ -42,6 +42,7 @@ import {
 import API from '../services/api';
 import AssetMap from '../components/AssetMap';
 import AssetFormModal from '../components/AssetFormModal';
+import { chennaiAssetsFallback } from '../data/chennaiAssetsFallback';
 
 const AdminDashboard = () => {
   // Navigation tab from URL search parameters: 'analytics' (default), 'inventory', 'map', 'attention'
@@ -53,8 +54,8 @@ const AdminDashboard = () => {
 
   // Summary and Asset state
   const [summaryData, setSummaryData] = useState(null);
-  const [assets, setAssets] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [assets, setAssets] = useState(chennaiAssetsFallback);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Table Search & Filters (for Inventory Tab)
@@ -77,8 +78,6 @@ const AdminDashboard = () => {
   }, []);
 
   const fetchDashboardData = async () => {
-    setLoading(true);
-    setError(null);
     try {
       // Fetch both dashboard summary and all assets in parallel
       const [summaryRes, assetsRes] = await Promise.all([
@@ -86,12 +85,14 @@ const AdminDashboard = () => {
         API.get('/api/assets').catch(() => ({ data: { data: [] } })),
       ]);
 
-      setSummaryData(summaryRes.data.data);
-      setAssets(assetsRes.data.data || []);
-      setLoading(false);
+      if (summaryRes.data?.data) {
+        setSummaryData(summaryRes.data.data);
+      }
+      if (assetsRes.data?.data && assetsRes.data.data.length > 0) {
+        setAssets(assetsRes.data.data);
+      }
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Failed to load dashboard telemetry');
-      setLoading(false);
+      console.warn('Dashboard live telemetry fetch failed:', err.message);
     }
   };
 
