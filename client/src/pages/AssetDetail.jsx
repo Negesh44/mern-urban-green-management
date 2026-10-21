@@ -22,6 +22,7 @@ import {
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import AssetFormModal from '../components/AssetFormModal';
+import ThreeTreeCanvas from '../components/ThreeTreeCanvas';
 import { chennaiAssetsFallback } from '../data/chennaiAssetsFallback';
 import 'leaflet/dist/leaflet.css';
 import toast from 'react-hot-toast';
@@ -365,6 +366,18 @@ const AssetDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* 3D Specimen Twin & LiDAR Telemetry */}
+      <section className="space-y-3">
+        <div className="flex items-center justify-between pb-1">
+          <h3 className="text-lg font-bold text-white font-heading flex items-center gap-2">
+            <Trees className="w-5 h-5 text-emerald-400" />
+            <span>Interactive 3D Flora Digital Twin & Structural Telemetry</span>
+          </h3>
+          <span className="text-xs text-slate-400 font-mono">WebGL Three.js Engine</span>
+        </div>
+        <ThreeTreeCanvas />
+      </section>
 
       {/* Maintenance History & Logging Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

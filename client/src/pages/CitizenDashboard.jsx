@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import API from '../services/api';
 import AssetMap from '../components/AssetMap';
+import ThreeTreeCanvas from '../components/ThreeTreeCanvas';
 import { useAuth } from '../context/AuthContext';
 import { chennaiAssetsFallback } from '../data/chennaiAssetsFallback';
 import toast from 'react-hot-toast';
@@ -25,6 +26,7 @@ const CitizenDashboard = () => {
   const { user } = useAuth();
   const [assets, setAssets] = useState(chennaiAssetsFallback);
   const [loading, setLoading] = useState(false);
+  const [viewMode, setViewMode] = useState('3d'); // '3d', 'map', 'both'
   const [adoptedCount, setAdoptedCount] = useState(2);
   const [reportSubmitting, setReportSubmitting] = useState(false);
   const [reportSubmitted, setReportSubmitted] = useState(false);
@@ -138,9 +140,76 @@ const CitizenDashboard = () => {
         </div>
       </div>
 
-      {/* 1. Interactive Leaflet GIS Map centered on Chennai */}
-      <section>
-        <AssetMap assets={assets} loading={loading} onRefresh={fetchAssets} />
+      {/* View Mode Switcher Header */}
+      <section className="space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl glass-panel">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs font-bold text-white uppercase tracking-wider">Telemetry Visualizer Mode</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-950/90 border border-emerald-900/40">
+            <button
+              onClick={() => setViewMode('3d')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                viewMode === '3d'
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Trees className="w-3.5 h-3.5" />
+              <span>3D Digital Twin</span>
+            </button>
+
+            <button
+              onClick={() => setViewMode('map')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                viewMode === 'map'
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <MapPin className="w-3.5 h-3.5" />
+              <span>Geospatial Map</span>
+            </button>
+
+            <button
+              onClick={() => setViewMode('both')}
+              className={`hidden sm:flex px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all items-center gap-1.5 cursor-pointer ${
+                viewMode === 'both'
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Compass className="w-3.5 h-3.5" />
+              <span>Dual View</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 3D Visualizer / Map Display */}
+        {viewMode === '3d' && (
+          <div className="animate-fadeIn">
+            <ThreeTreeCanvas />
+          </div>
+        )}
+
+        {viewMode === 'map' && (
+          <div className="animate-fadeIn">
+            <AssetMap assets={assets} loading={loading} onRefresh={fetchAssets} />
+          </div>
+        )}
+
+        {viewMode === 'both' && (
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 animate-fadeIn">
+            <div>
+              <ThreeTreeCanvas />
+            </div>
+            <div>
+              <AssetMap assets={assets} loading={loading} onRefresh={fetchAssets} />
+            </div>
+          </div>
+        )}
       </section>
 
       {/* 2. Highlights Grid & Citizen Hazard Reporting */}
@@ -161,7 +230,7 @@ const CitizenDashboard = () => {
             {assets.slice(0, 6).map((asset) => (
               <div
                 key={asset._id}
-                className="p-4 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-emerald-800/50 transition-all flex flex-col justify-between space-y-3"
+                className="p-4 rounded-2xl glass-panel hover:border-emerald-500/50 transition-all flex flex-col justify-between space-y-3 group hover:scale-[1.01]"
               >
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -181,7 +250,7 @@ const CitizenDashboard = () => {
                     </span>
                   </div>
 
-                  <h4 className="text-sm font-bold text-slate-100">{asset.name}</h4>
+                  <h4 className="text-sm font-bold text-slate-100 group-hover:text-emerald-300 transition-colors">{asset.name}</h4>
                   {asset.species && (
                     <p className="text-xs text-slate-400 italic -mt-1">{asset.species}</p>
                   )}
@@ -210,7 +279,7 @@ const CitizenDashboard = () => {
 
         {/* Citizen Hazard Quick Report Form (Col 3) */}
         <div className="space-y-4">
-          <div className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-4 shadow-xl">
+          <div className="p-6 rounded-3xl glass-panel-glow space-y-4 shadow-2xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold uppercase tracking-wider">
                 <AlertCircle className="w-4 h-4" />
