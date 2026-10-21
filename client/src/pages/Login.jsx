@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { LogIn, Lock, Mail, Trees, AlertCircle, Sparkles, Shield, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -9,9 +9,16 @@ const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
   
-  const { login } = useAuth();
+  const { login, user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // If already authenticated, redirect straight to their dashboard
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      navigate(user.role === 'admin' ? '/admin/dashboard' : '/citizen/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleQuickFill = (email, password) => {
     setFormData({ email, password });
@@ -24,8 +31,9 @@ const Login = () => {
     setFormError('');
 
     if (!formData.email || !formData.password) {
-      setFormError('Please enter both email and password.');
-      toast.error('Please enter both email and password.');
+      const msg = 'Please enter both email and password.';
+      setFormError(msg);
+      toast.error(msg);
       return;
     }
 
@@ -34,11 +42,20 @@ const Login = () => {
     setIsSubmitting(false);
 
     if (result.success) {
-      toast.success(`Welcome back, ${result.user.name}!`);
-      const redirectPath =
-        location.state?.from?.pathname ||
-        (result.user.role === 'admin' ? '/admin/dashboard' : '/citizen/dashboard');
-      navigate(redirectPath, { replace: true });
+      const role = result.user?.role || 'citizen';
+      toast.success(`Welcome back, ${result.user.name} (${role.toUpperCase()})!`);
+
+      // If user is Admin, strictly route to /admin/dashboard (unless from was an admin subpage)
+      let redirectPath = '/citizen/dashboard';
+      if (role === 'admin') {
+        const fromPath = location.state?.from?.pathname;
+        redirectPath = (fromPath && fromPath.startsWith('/admin')) ? fromPath : '/admin/dashboard';
+      } else {
+        const fromPath = location.state?.from?.pathname;
+        redirectPath = (fromPath && !fromPath.startsWith('/admin')) ? fromPath : '/citizen/dashboard';
+      }
+
+      navigate(redirectPath, { replace: true, state: {} });
     } else {
       setFormError(result.error);
       toast.error(result.error || 'Authentication failed');

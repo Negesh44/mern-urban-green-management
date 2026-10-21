@@ -28,7 +28,7 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     toast.success('Signed out successfully');
-    navigate('/login');
+    navigate('/login', { replace: true, state: {} });
   };
 
   const closeMenu = () => setMobileMenuOpen(false);
@@ -54,54 +54,84 @@ const Navbar = () => {
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center space-x-1.5">
+            {isAuthenticated && user?.role === 'admin' ? (
+              <>
+                <Link
+                  to="/admin/dashboard"
+                  className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                    isActive('/admin/dashboard')
+                      ? 'bg-teal-950/90 text-teal-300 border border-teal-800/80 shadow-sm'
+                      : 'text-slate-300 hover:text-teal-300 hover:bg-slate-900/60'
+                  }`}
+                >
+                  <Shield className="w-3.5 h-3.5 text-teal-400" />
+                  <span>Admin Console</span>
+                </Link>
 
-            <Link
-              to="/citizen/dashboard"
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                isActive('/citizen/dashboard')
-                  ? 'bg-emerald-950/90 text-emerald-300 border border-emerald-800/60 shadow-sm'
-                  : 'text-slate-300 hover:text-emerald-300 hover:bg-slate-900/60'
-              }`}
-            >
-              <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Green Map</span>
-            </Link>
+                <Link
+                  to="/admin/reports"
+                  className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                    isActive('/admin/reports')
+                      ? 'bg-amber-950/90 text-amber-300 border border-amber-800/80 shadow-sm'
+                      : 'text-slate-300 hover:text-amber-300 hover:bg-slate-900/60'
+                  }`}
+                >
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Incident Triage</span>
+                </Link>
 
-            <Link
-              to="/citizen/report"
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                isActive('/citizen/report')
-                  ? 'bg-amber-950/90 text-amber-300 border border-amber-800/60 shadow-sm'
-                  : 'text-slate-300 hover:text-amber-300 hover:bg-slate-900/60'
-              }`}
-            >
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-              <span>Report Hazard</span>
-            </Link>
+                <Link
+                  to="/citizen/dashboard"
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                    isActive('/citizen/dashboard')
+                      ? 'bg-emerald-950/90 text-emerald-300 border border-emerald-800/60'
+                      : 'text-slate-400 hover:text-emerald-300 hover:bg-slate-900/40'
+                  }`}
+                >
+                  <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Preview Citizen Map</span>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/citizen/dashboard"
+                  className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                    isActive('/citizen/dashboard')
+                      ? 'bg-emerald-950/90 text-emerald-300 border border-emerald-800/60 shadow-sm'
+                      : 'text-slate-300 hover:text-emerald-300 hover:bg-slate-900/60'
+                  }`}
+                >
+                  <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Green Map</span>
+                </Link>
 
-            {isAuthenticated && (
-              <Link
-                to="/citizen/reports"
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                  isActive('/citizen/reports')
-                    ? 'bg-emerald-950/90 text-emerald-300 border border-emerald-800/60 shadow-sm'
-                    : 'text-slate-300 hover:text-emerald-300 hover:bg-slate-900/60'
-                }`}
-              >
-                <FileText className="w-3.5 h-3.5 text-teal-400" />
-                <span>My Reports</span>
-              </Link>
-            )}
+                <Link
+                  to="/citizen/report"
+                  className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                    isActive('/citizen/report')
+                      ? 'bg-amber-950/90 text-amber-300 border border-amber-800/60 shadow-sm'
+                      : 'text-slate-300 hover:text-amber-300 hover:bg-slate-900/60'
+                  }`}
+                >
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Report Hazard</span>
+                </Link>
 
-            {/* If Admin visits public/citizen view, provide shortcut to Admin Sidebar / Dashboard */}
-            {isAuthenticated && user?.role === 'admin' && (
-              <Link
-                to="/admin/dashboard"
-                className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-teal-950/80 hover:bg-teal-900 text-teal-300 border border-teal-800/80 transition-colors flex items-center gap-1.5 ml-1"
-              >
-                <Shield className="w-3.5 h-3.5 text-teal-400" />
-                <span>Admin Console</span>
-              </Link>
+                {isAuthenticated && (
+                  <Link
+                    to="/citizen/reports"
+                    className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                      isActive('/citizen/reports')
+                        ? 'bg-emerald-950/90 text-emerald-300 border border-emerald-800/60 shadow-sm'
+                        : 'text-slate-300 hover:text-emerald-300 hover:bg-slate-900/60'
+                    }`}
+                  >
+                    <FileText className="w-3.5 h-3.5 text-teal-400" />
+                    <span>My Reports</span>
+                  </Link>
+                )}
+              </>
             )}
 
             <div className="h-4 w-px bg-slate-800 mx-1.5" />
