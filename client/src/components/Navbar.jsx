@@ -37,8 +37,12 @@ const Navbar = () => {
     <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-950/85 border-b border-emerald-900/40 shadow-lg shadow-black/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Brand Logo */}
-          <Link to="/" className="flex items-center space-x-3 group" onClick={closeMenu}>
+          {/* Brand Logo - Directly routes to portal or login */}
+          <Link
+            to={isAuthenticated ? (user?.role === 'admin' ? '/admin/dashboard' : '/citizen/dashboard') : '/login'}
+            className="flex items-center space-x-3 group cursor-pointer"
+            onClick={closeMenu}
+          >
             <div className="p-2 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 text-white shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
               <Trees className="w-6 h-6" />
             </div>
@@ -48,18 +52,8 @@ const Navbar = () => {
             </div>
           </Link>
 
-          {/* Desktop Navigation Links (Citizen / Public Focus) */}
+          {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center space-x-1.5">
-            <Link
-              to="/"
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
-                isActive('/')
-                  ? 'bg-emerald-950/90 text-emerald-300 border border-emerald-800/60 shadow-sm'
-                  : 'text-slate-300 hover:text-emerald-300 hover:bg-slate-900/60'
-              }`}
-            >
-              Home
-            </Link>
 
             <Link
               to="/citizen/dashboard"
@@ -173,15 +167,6 @@ const Navbar = () => {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-slate-950 border-b border-slate-800 px-4 pt-2 pb-6 space-y-3 animate-fadeIn">
-          <Link
-            to="/"
-            onClick={closeMenu}
-            className={`block px-3 py-2 rounded-xl text-xs font-semibold ${
-              isActive('/') ? 'bg-emerald-950 text-emerald-300' : 'text-slate-300'
-            }`}
-          >
-            Home
-          </Link>
 
           <Link
             to="/citizen/dashboard"

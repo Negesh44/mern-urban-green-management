@@ -1,7 +1,6 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
-import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import AdminDashboard from './pages/AdminDashboard';
@@ -11,8 +10,31 @@ import ReportIssue from './pages/ReportIssue';
 import MyReports from './pages/MyReports';
 import AdminReports from './pages/AdminReports';
 import ProtectedRoute from './components/ProtectedRoute';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
+
+// Smart Home Dispatcher: Automatically routes to role portal or login, bypassing marketing home page
+const HomeDispatcher = () => {
+  const { user, isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+        <div className="w-10 h-10 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+        <p className="text-sm text-slate-400">Loading Smart Urban Green Portal...</p>
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    if (user?.role === 'admin') {
+      return <Navigate to="/admin/dashboard" replace />;
+    }
+    return <Navigate to="/citizen/dashboard" replace />;
+  }
+
+  return <Navigate to="/login" replace />;
+};
 
 function App() {
   return (
@@ -45,8 +67,8 @@ function App() {
       />
       <Routes>
         <Route path="/" element={<Layout />}>
-          {/* Public Routes */}
-          <Route index element={<Landing />} />
+          {/* Public & Entry Routes */}
+          <Route index element={<HomeDispatcher />} />
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
 
