@@ -47,8 +47,6 @@ const reportSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    bufferCommands: false,
-    autoIndex: false,
   }
 );
 

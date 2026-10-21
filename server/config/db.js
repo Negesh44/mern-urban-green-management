@@ -67,66 +67,77 @@ mongoose.connection.on('disconnected', () => {
   console.warn('[MongoDB Event] Connection lost, reconnecting...');
 });
 
-// Disable buffering so Mongoose never holds requests in a 10-second stall
-mongoose.set('bufferCommands', false);
+let connectionPromise = null;
 
 const connectDB = async () => {
-  // Reuse existing connection in serverless warm invocations
-  if (mongoose.connection.readyState >= 1) {
+  // If already fully connected, return immediately
+  if (mongoose.connection.readyState === 1) {
     return mongoose.connection;
   }
 
-  const defaultUri = process.env.MONGO_URI || `mongodb://127.0.0.1:27017/${DB_NAME}`;
+  // If a connection attempt is already in flight, reuse the promise
+  if (connectionPromise) {
+    return connectionPromise;
+  }
 
-  try {
-    const conn = await mongoose.connect(defaultUri, {
-      serverSelectionTimeoutMS: 5000,
-      maxPoolSize: 20,
-      minPoolSize: 5,
-      autoIndex: false,
-    });
-    console.log(`[MongoDB] Connected successfully to database: ${conn.connection.host} (${conn.connection.name})`);
-    return conn;
-  } catch (error) {
-    if (isVercel) {
-      console.error('[MongoDB Error] Could not connect to MONGO_URI in Vercel environment:', error.message);
-      throw error;
-    }
+  connectionPromise = (async () => {
+    const defaultUri = process.env.MONGO_URI || `mongodb://127.0.0.1:27017/${DB_NAME}`;
 
-    // Try auto-starting local mongod if connection refused on localhost
-    if (defaultUri.includes('127.0.0.1:27017') || defaultUri.includes('localhost:27017')) {
-      const started = await spawnLocalMongod();
-      if (started) {
-        try {
-          const conn = await mongoose.connect(defaultUri, { serverSelectionTimeoutMS: 4000 });
-          console.log(`[MongoDB] Connected successfully to auto-started database: ${conn.connection.host} (${conn.connection.name})`);
-          return conn;
-        } catch (retryErr) {
-          console.warn('[MongoDB Retry] Failed after daemon spawn:', retryErr.message);
+    try {
+      const conn = await mongoose.connect(defaultUri, {
+        serverSelectionTimeoutMS: 5000,
+        maxPoolSize: 20,
+        minPoolSize: 5,
+        autoIndex: false,
+      });
+      console.log(`[MongoDB] Connected successfully to database: ${conn.connection.host} (${conn.connection.name})`);
+      return conn;
+    } catch (error) {
+      if (isVercel) {
+        console.error('[MongoDB Error] Could not connect to MONGO_URI in Vercel environment:', error.message);
+        connectionPromise = null;
+        throw error;
+      }
+
+      // Try auto-starting local mongod if connection refused on localhost
+      if (defaultUri.includes('127.0.0.1:27017') || defaultUri.includes('localhost:27017')) {
+        const started = await spawnLocalMongod();
+        if (started) {
+          try {
+            const conn = await mongoose.connect(defaultUri, { serverSelectionTimeoutMS: 4000 });
+            console.log(`[MongoDB] Connected successfully to auto-started database: ${conn.connection.host} (${conn.connection.name})`);
+            return conn;
+          } catch (retryErr) {
+            console.warn('[MongoDB Retry] Failed after daemon spawn:', retryErr.message);
+          }
         }
       }
-    }
 
-    // Secondary fallback: MongoMemoryServer dynamic port
-    console.log(`[MongoDB] Initializing Embedded Persistent MongoDB Service fallback...`);
-    try {
-      const { MongoMemoryServer } = require('mongodb-memory-server');
-      const mongod = await MongoMemoryServer.create({
-        instance: {
-          dbPath: dbDir,
-          dbName: DB_NAME,
-        },
-      });
+      // Secondary fallback: MongoMemoryServer dynamic port
+      console.log(`[MongoDB] Initializing Embedded Persistent MongoDB Service fallback...`);
+      try {
+        const { MongoMemoryServer } = require('mongodb-memory-server');
+        const mongod = await MongoMemoryServer.create({
+          instance: {
+            dbPath: dbDir,
+            dbName: DB_NAME,
+          },
+        });
 
-      const baseUri = mongod.getUri();
-      const targetUri = baseUri.endsWith('/') ? `${baseUri}${DB_NAME}` : `${baseUri}/${DB_NAME}`;
-      const conn = await mongoose.connect(targetUri);
-      console.log(`[MongoDB] Embedded Persistent MongoDB connected at ${targetUri}`);
-      return conn;
-    } catch (memErr) {
-      console.error('[MongoDB Error] Database connection could not be established:', memErr.message);
+        const baseUri = mongod.getUri();
+        const targetUri = baseUri.endsWith('/') ? `${baseUri}${DB_NAME}` : `${baseUri}/${DB_NAME}`;
+        const conn = await mongoose.connect(targetUri);
+        console.log(`[MongoDB] Embedded Persistent MongoDB connected at ${targetUri}`);
+        return conn;
+      } catch (memErr) {
+        connectionPromise = null;
+        console.error('[MongoDB Error] Database connection could not be established:', memErr.message);
+        throw memErr;
+      }
     }
-  }
+  })();
+
+  return connectionPromise;
 };
 
 module.exports = connectDB;
