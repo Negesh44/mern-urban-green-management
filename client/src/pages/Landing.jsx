@@ -102,7 +102,7 @@ const Landing = () => {
         <div className="mt-12 pt-6 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
             <div className="text-xs text-slate-400">Catalogued Assets</div>
-            <div className="text-xl sm:text-2xl font-black text-white mt-0.5">22+ Reserves</div>
+            <div className="text-xl sm:text-2xl font-black text-white mt-0.5">38+ Reserves</div>
             <div className="text-[10px] text-emerald-400 font-mono">Trees, Parks & Forests</div>
           </div>
 
