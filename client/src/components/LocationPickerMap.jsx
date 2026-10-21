@@ -40,8 +40,8 @@ const MapClickHandler = ({ onLocationSelect }) => {
   return null;
 };
 
-const LocationPickerMap = ({ location = { lat: 28.6139, lng: 77.2090 }, onLocationSelect }) => {
-  const center = [location.lat || 28.6139, location.lng || 77.2090];
+const LocationPickerMap = ({ location = { lat: 13.0827, lng: 80.2707 }, onLocationSelect }) => {
+  const center = [location.lat || 13.0827, location.lng || 80.2707];
 
   return (
     <div className="space-y-2">

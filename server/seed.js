@@ -8,243 +8,283 @@ const Report = require('./models/Report');
 
 dotenv.config();
 
+// Chennai Green Assets: Trees
 const treesData = [
   {
     type: 'tree',
     name: 'Heritage Peepal Specimen #01',
-    species: 'Ficus religiosa (Peepal)',
-    age: 55,
+    species: 'Ficus religiosa (Arasa Maram / Peepal)',
+    age: 65,
     healthStatus: 'Healthy',
-    location: { lat: 28.6129, lng: 77.2295 },
+    location: { lat: 13.0334, lng: 80.2698 }, // Kapaleeshwarar Grove, Mylapore
     images: ['https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=800'],
-    description: 'Centuries-old heritage sacred fig tree with widespread canopy providing shade to surrounding public square.',
-    plantingDate: new Date('1971-06-15'),
+    description: 'Centuries-old heritage sacred fig tree with widespread canopy providing shade to surrounding Mylapore public temple square.',
+    plantingDate: new Date('1961-06-15'),
   },
   {
     type: 'tree',
     name: 'Sacred Banyan Landmark #02',
-    species: 'Ficus benghalensis (Banyan)',
-    age: 80,
+    species: 'Ficus benghalensis (Aala Maram / Great Banyan)',
+    age: 150,
     healthStatus: 'Healthy',
-    location: { lat: 28.6145, lng: 77.2090 },
+    location: { lat: 13.0076, lng: 80.2588 }, // Theosophical Society, Adyar
     images: ['https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=800'],
-    description: 'Prominent landmark banyan with expansive aerial prop root system and thriving bird nesting sanctuary.',
-    plantingDate: new Date('1946-08-15'),
+    description: 'Renowned historic Adyar Banyan landmark with expansive aerial prop root system and thriving migratory bird sanctuary.',
+    plantingDate: new Date('1876-08-15'),
   },
   {
     type: 'tree',
-    name: 'Urban Medicinal Neem #03',
-    species: 'Azadirachta indica (Neem)',
-    age: 18,
+    name: 'Coastal Casuarina Specimen #03',
+    species: 'Casuarina equisetifolia (Savukku)',
+    age: 25,
     healthStatus: 'Healthy',
-    location: { lat: 28.6250, lng: 77.2180 },
+    location: { lat: 13.0540, lng: 80.2830 }, // Marina Beach Promenade
     images: ['https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800'],
-    description: 'Mature evergreen neem tree with high air-purification and microclimate cooling index.',
-    plantingDate: new Date('2008-07-20'),
+    description: 'Salt-tolerant windbreak conifer shielding the coastal boulevard from sea-spray aerosol and sand drift.',
+    plantingDate: new Date('2001-07-20'),
   },
   {
     type: 'tree',
-    name: 'Roadside Neem #04',
-    species: 'Azadirachta indica (Neem)',
-    age: 12,
-    healthStatus: 'Diseased',
-    location: { lat: 28.6280, lng: 77.2210 },
-    images: ['https://images.unsplash.com/photo-1448375240586-882707db888b?w=800'],
-    description: 'Exhibiting leaf spot fungal distress and branch dieback along eastern canopy quadrant.',
-    plantingDate: new Date('2014-04-10'),
+    name: 'Ancient Neem Specimen #04',
+    species: 'Azadirachta indica (Vembu / Neem)',
+    age: 40,
+    healthStatus: 'Healthy',
+    location: { lat: 13.0320, lng: 80.2780 }, // San Thome High Road
+    images: ['https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800'],
+    description: 'Large medicinal evergreen neem offering natural microclimate cooling and high bio-filtration along San Thome corridor.',
+    plantingDate: new Date('1986-04-10'),
   },
   {
     type: 'tree',
     name: 'Royal Flame Gulmohar #05',
-    species: 'Delonix regia (Gulmohar)',
+    species: 'Delonix regia (Mayil-kondrai / Gulmohar)',
+    age: 18,
+    healthStatus: 'Healthy',
+    location: { lat: 13.0020, lng: 80.2610 }, // Besant Avenue, Adyar
+    images: ['https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=800'],
+    description: 'Vibrant scarlet blooming umbrella-shaped canopy tree along the historic wooded avenue of Besant Nagar.',
+    plantingDate: new Date('2008-05-22'),
+  },
+  {
+    type: 'tree',
+    name: 'Yellow Copperpod Specimen #06',
+    species: 'Peltophorum pterocarpum (Iyalvagai / Copperpod)',
+    age: 22,
+    healthStatus: 'Healthy',
+    location: { lat: 12.9915, lng: 80.2337 }, // IIT Madras Campus Canopy
+    images: ['https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800'],
+    description: 'Sturdy native copperpod tree flowering with bright golden blossoms; key nesting host for urban hornbills.',
+    plantingDate: new Date('2004-09-12'),
+  },
+  {
+    type: 'tree',
+    name: 'Sacred Nagalingam #07',
+    species: 'Couroupita guianensis (Nagalingam / Cannonball Tree)',
+    age: 35,
+    healthStatus: 'Healthy',
+    location: { lat: 13.0405, lng: 80.2337 }, // Panagal Park, T. Nagar
+    images: ['https://images.unsplash.com/photo-1511497584788-87676104235f?w=800'],
+    description: 'Iconic botanical specimen producing aromatic spherical floral clusters with strong cultural value.',
+    plantingDate: new Date('1991-03-30'),
+  },
+  {
+    type: 'tree',
+    name: 'Indian Beech Pungai #08',
+    species: 'Pongamia pinnata (Pungai)',
     age: 15,
     healthStatus: 'Healthy',
-    location: { lat: 28.6320, lng: 77.2150 },
-    images: ['https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=800'],
-    description: 'Vibrant scarlet blooming ornamental canopy tree along the central avenue.',
-    plantingDate: new Date('2011-05-22'),
+    location: { lat: 13.0800, lng: 80.2600 }, // Egmore Museum Enclave
+    images: ['https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=800'],
+    description: 'Deep-rooted indigenous nitrogen-fixing tree providing dense shade and soil enrichment in central Chennai.',
+    plantingDate: new Date('2011-08-10'),
   },
   {
     type: 'tree',
-    name: 'Azure Jacaranda #06',
-    species: 'Jacaranda mimosifolia (Jacaranda)',
-    age: 9,
+    name: 'Heritage Rain Tree #09',
+    species: 'Samanea saman (Thoongu Moonji Maram / Rain Tree)',
+    age: 45,
+    healthStatus: 'Diseased',
+    location: { lat: 13.0600, lng: 80.2450 }, // Nungambakkam High Road
+    images: ['https://images.unsplash.com/photo-1448375240586-882707db888b?w=800'],
+    description: 'Sprawling mature rain tree showing initial heartwood fungal rot and heavy deadwood along eastern limb.',
+    plantingDate: new Date('1981-10-05'),
+  },
+  {
+    type: 'tree',
+    name: 'Urban Tamarind Specimen #10',
+    species: 'Tamarindus indica (Puliya Maram / Tamarind)',
+    age: 30,
     healthStatus: 'Healthy',
-    location: { lat: 28.6050, lng: 77.2100 },
-    images: ['https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800'],
-    description: 'Sub-tropical ornamental tree renowned for intense violet bell-shaped blossoms.',
-    plantingDate: new Date('2017-09-12'),
+    location: { lat: 13.0830, lng: 80.2400 }, // Kilpauk Garden Road
+    images: ['https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800'],
+    description: 'Hardy drought-resistant evergreen specimen with dense foliage contributing to ambient temperature cooling.',
+    plantingDate: new Date('1996-11-01'),
   },
   {
     type: 'tree',
-    name: 'Golden Shower Amaltas #07',
-    species: 'Cassia fistula (Amaltas)',
+    name: 'Indian Tulip Tree #11',
+    species: 'Thespesia populnea (Poovarasu)',
+    age: 12,
+    healthStatus: 'Healthy',
+    location: { lat: 13.0580, lng: 80.2740 }, // Triplicane Urban Belt
+    images: ['https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=800'],
+    description: 'Coast-friendly tree with cup-shaped yellow flowers, widely utilized in urban greening across coastal wards.',
+    plantingDate: new Date('2014-06-18'),
+  },
+  {
+    type: 'tree',
+    name: 'Red Sandalwood Specimen #12',
+    species: 'Pterocarpus santalinus (Sengandham)',
+    age: 16,
+    healthStatus: 'Diseased',
+    location: { lat: 13.1495, lng: 80.2312 }, // Madhavaram Botanical Garden
+    images: ['https://images.unsplash.com/photo-1448375240586-882707db888b?w=800'],
+    description: 'Protected endemic timber tree suffering from bark borer infestation requiring systematic bio-pesticide treatment.',
+    plantingDate: new Date('2010-04-12'),
+  },
+  {
+    type: 'tree',
+    name: 'Sacred Sita Ashoka #13',
+    species: 'Saraca asoca (Asoka Maram)',
+    age: 10,
+    healthStatus: 'Healthy',
+    location: { lat: 13.0110, lng: 80.2360 }, // Gandhi Mandapam Grove, Guindy
+    images: ['https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=800'],
+    description: 'Shade-loving native evergreen with fragrant orange-red blooms, preserving traditional medicinal arboretum heritage.',
+    plantingDate: new Date('2016-07-04'),
+  },
+  {
+    type: 'tree',
+    name: 'Desiccated Storm Casuarina #14',
+    species: 'Casuarina equisetifolia',
+    age: 28,
+    healthStatus: 'Dead',
+    location: { lat: 13.0280, lng: 80.2790 }, // Foreshore Estate Coast
+    images: ['https://images.unsplash.com/photo-1448375240586-882707db888b?w=800'],
+    description: 'Dead coastal timber post-monsoon storm surge. Slated for safe crane removal by Greater Chennai Corporation arborists.',
+    plantingDate: new Date('1998-02-14'),
+  },
+  {
+    type: 'tree',
+    name: 'Pyramidal Silver Oak #15',
+    species: 'Grevillea robusta (Silver Oak)',
     age: 14,
     healthStatus: 'Healthy',
-    location: { lat: 28.6180, lng: 77.2340 },
-    images: ['https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800'],
-    description: 'Indigenous flowering specimen producing pendulous clusters of aromatic golden-yellow flowers.',
-    plantingDate: new Date('2012-03-30'),
-  },
-  {
-    type: 'tree',
-    name: 'Riverside Arjun #08',
-    species: 'Terminalia arjuna (Arjun)',
-    age: 25,
-    healthStatus: 'Healthy',
-    location: { lat: 28.6100, lng: 77.2450 },
-    images: ['https://images.unsplash.com/photo-1511497584788-87676104235f?w=800'],
-    description: 'Buttressed trunk riverbank species aiding riparian soil stabilization and water table retention.',
-    plantingDate: new Date('2001-08-10'),
-  },
-  {
-    type: 'tree',
-    name: 'White Teak specimen #09',
-    species: 'Gmelina arborea (White Teak)',
-    age: 20,
-    healthStatus: 'Diseased',
-    location: { lat: 28.6400, lng: 77.2050 },
+    location: { lat: 13.0880, lng: 80.2180 }, // Anna Nagar 2nd Avenue
     images: ['https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=800'],
-    description: 'Fast-growing deciduous species suffering from bark borer infestation on lower trunk.',
-    plantingDate: new Date('2006-10-05'),
-  },
-  {
-    type: 'tree',
-    name: 'Sacred Sita Ashoka #10',
-    species: 'Saraca asoca (Ashoka)',
-    age: 7,
-    healthStatus: 'Healthy',
-    location: { lat: 28.6170, lng: 77.2250 },
-    images: ['https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800'],
-    description: 'Rainforest evergreen tree with vibrant orange-yellow inflorescences planted in memorial grove.',
-    plantingDate: new Date('2019-11-01'),
-  },
-  {
-    type: 'tree',
-    name: 'Desiccated Indian Rosewood #11',
-    species: 'Dalbergia sissoo (Sheesham)',
-    age: 30,
-    healthStatus: 'Dead',
-    location: { lat: 28.6020, lng: 77.2200 },
-    images: ['https://images.unsplash.com/photo-1448375240586-882707db888b?w=800'],
-    description: 'Dead standing timber requiring controlled removal to prevent safety hazard to road traffic.',
-    plantingDate: new Date('1996-02-14'),
-  },
-  {
-    type: 'tree',
-    name: 'Yellow Copperpod #12',
-    species: 'Peltophorum pterocarpum (Copperpod)',
-    age: 11,
-    healthStatus: 'Healthy',
-    location: { lat: 28.6350, lng: 77.2280 },
-    images: ['https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=800'],
-    description: 'Sturdy wind-resistant canopy providing dense shade over public transit stop.',
-    plantingDate: new Date('2015-06-18'),
-  },
-  {
-    type: 'tree',
-    name: 'Evergreen Silver Oak #13',
-    species: 'Grevillea robusta (Silver Oak)',
-    age: 16,
-    healthStatus: 'Healthy',
-    location: { lat: 28.6220, lng: 77.2010 },
-    images: ['https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=800'],
-    description: 'Tall pyramidal evergreen with distinctive silver-underside pinnate foliage.',
-    plantingDate: new Date('2010-07-04'),
-  },
-  {
-    type: 'tree',
-    name: 'Ancient Mahua Specimen #14',
-    species: 'Madhuca longifolia (Mahua)',
-    age: 42,
-    healthStatus: 'Healthy',
-    location: { lat: 28.6090, lng: 77.2130 },
-    images: ['https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=800'],
-    description: 'Culturally significant ecological tree producing nectar-rich flowers supporting native pollinators.',
-    plantingDate: new Date('1984-01-26'),
-  },
-  {
-    type: 'tree',
-    name: 'Red Silk Cotton Semal #15',
-    species: 'Bombax ceiba (Semal)',
-    age: 22,
-    healthStatus: 'Diseased',
-    location: { lat: 28.6260, lng: 77.2390 },
-    images: ['https://images.unsplash.com/photo-1448375240586-882707db888b?w=800'],
-    description: 'Large thorny trunk tree showing signs of root rot due to municipal drainage overflow.',
-    plantingDate: new Date('2004-09-09'),
+    description: 'Fast-growing ornamental shade tree along the planned boulevard avenue of Anna Nagar West.',
+    plantingDate: new Date('2012-09-09'),
   },
 ];
 
+// Chennai Parks
 const parksData = [
   {
     type: 'park',
-    name: 'Central Botanical Gardens & Urban Park',
+    name: 'Semmozhi Poonga Botanical Garden',
     healthStatus: 'Excellent',
-    area: 120000, // 120,000 sq meters
-    location: { lat: 28.6139, lng: 77.2090 },
+    area: 89000, // 89,000 sq meters (approx 22 acres)
+    location: { lat: 13.0520, lng: 80.2505 }, // Cathedral Road, Teynampet
     images: ['https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800'],
-    description: 'Premier urban green lung featuring historic arboretum, herb gardens, solar water fountains, and interactive eco-learning trails.',
+    description: 'Flagship botanical garden situated in central Chennai featuring exotic and medicinal plants, vertical green walls, bonsai pavilion, and micro-sprinkler misting network.',
   },
   {
     type: 'park',
-    name: 'Yamuna Riverfront Biodiversity Park',
+    name: 'Chetpet EcoPark & Lake',
     healthStatus: 'Good',
-    area: 350000, // 350,000 sq meters
-    location: { lat: 28.6450, lng: 77.2510 },
+    area: 65000, // 65,000 sq meters
+    location: { lat: 13.0722, lng: 80.2394 }, // Chetpet
     images: ['https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800'],
-    description: 'Wetland park ecosystem with restored native marshes, migratory waterfowl bird blinds, and riparian nature walks.',
+    description: 'Restored urban lake wetland park with pedestrian jogging corridors, indigenous aquatic flora, aeration fountains, and recreational eco-boating zone.',
   },
   {
     type: 'park',
-    name: 'Eco Serenity Community Park',
+    name: 'Anna Nagar Tower Park (Dr. Visveswaraya)',
     healthStatus: 'Good',
-    area: 450000, // 45,000 sq meters
-    location: { lat: 28.5980, lng: 77.2150 },
+    area: 110000, // 110,000 sq meters
+    location: { lat: 13.0850, lng: 80.2130 }, // Anna Nagar
     images: ['https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800'],
-    description: 'Neighborhood community green space with open grass amphitheater, butterfly garden, and children play meadow.',
+    description: 'Premier civic park anchored by the historic 135-foot observation tower, surrounded by mature canopy trees, open amphitheater, and skating ring.',
+  },
+  {
+    type: 'park',
+    name: 'Nageswara Rao Park (Mylapore)',
+    healthStatus: 'Good',
+    area: 45000, // 45,000 sq meters
+    location: { lat: 13.0372, lng: 80.2635 }, // Luz, Mylapore
+    images: ['https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800'],
+    description: 'Vibrant residential heritage park with lush bamboo clusters, yoga pavilions, stone walking pathways, and active senior citizen wellness groups.',
+  },
+  {
+    type: 'park',
+    name: 'Tholkappia Poonga (Adyar Eco Park)',
+    healthStatus: 'Excellent',
+    area: 350000, // 350,000 sq meters (58 acres estuarine wetland)
+    location: { lat: 13.0163, lng: 80.2642 }, // Adyar Estuary, Raja Annamalaipuram
+    images: ['https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800'],
+    description: 'Ecologically rehabilitated estuarine wetland sanctuary harboring mangrove species (Avicennia marina), supporting over 140 resident and migratory bird species.',
   },
 ];
 
+// Chennai Urban Forests & Biosphere Reserves
 const urbanForestsData = [
   {
     type: 'urban_forest',
-    name: 'Northern Ridge Urban Biosphere Reserve',
+    name: 'Guindy National Park & Biosphere Sanctuary',
     healthStatus: 'Excellent',
-    area: 850000, // 850,000 sq meters
-    location: { lat: 28.6850, lng: 77.2100 },
+    area: 2700000, // 2,700,000 sq meters (270 hectares)
+    location: { lat: 13.0067, lng: 80.2206 }, // Guindy
     images: ['https://images.unsplash.com/photo-1448375240586-882707db888b?w=800'],
-    description: 'Dense deciduous and thorny scrub forest reserve sustaining over 180 species of birds and rich wildlife biodiversity.',
+    description: 'One of the few national parks situated entirely inside a metropolitan city, featuring tropical dry evergreen scrub forest, spotted deer, and blackbuck habitat.',
   },
   {
     type: 'urban_forest',
-    name: 'Southern Ridge Eco Sanctuary',
+    name: 'Nanmangalam Reserve Forest Sanctuary',
     healthStatus: 'Good',
-    area: 620000, // 620,000 sq meters
-    location: { lat: 28.5200, lng: 77.1800 },
+    area: 3200000, // 3,200,000 sq meters (320 hectares)
+    location: { lat: 12.9230, lng: 80.1800 }, // Nanmangalam, South Chennai
     images: ['https://images.unsplash.com/photo-1511497584788-87676104235f?w=800'],
-    description: 'Critical urban forest buffer mitigating city heat island effects, equipped with solar micro-weather sensor towers.',
+    description: 'Dense scrub reserve forest renowned as a haven for the great horned owl and native reptiles, functioning as a vital groundwater recharge zone.',
+  },
+  {
+    type: 'urban_forest',
+    name: 'Pallikaranai Marshland Conservation Reserve',
+    healthStatus: 'Fair',
+    area: 1200000, // 1,200,000 sq meters
+    location: { lat: 12.9360, lng: 80.2140 }, // Pallikaranai
+    images: ['https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800'],
+    description: 'Ramsar wetland site absorbing South Chennai monsoon floodwaters and acting as a natural biological filter for the surrounding urban sprawl.',
   },
 ];
 
+// Chennai Green Belts & Linear Corridors
 const greenBeltsData = [
   {
     type: 'green_belt',
-    name: 'Outer Ring Road Linear Eco Buffer',
+    name: 'Marina Beach Promenade Green Belt',
     healthStatus: 'Good',
-    area: 180000, // 180,000 sq meters
-    location: { lat: 28.6500, lng: 77.1600 },
+    area: 220000, // 220,000 sq meters
+    location: { lat: 13.0500, lng: 80.2824 }, // Marina Promenade, Kamarajar Salai
     images: ['https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800'],
-    description: 'Multi-tiered acoustic and particulate pollution mitigation tree corridor buffering residential zones from expressway traffic.',
+    description: 'Continuous coastal tree avenue planted with casuarinas, palms, and flowering shrubs providing micro-cooling along Chennai coastline.',
   },
   {
     type: 'green_belt',
-    name: 'Metro Transit Green Corridor',
+    name: 'OMR IT Expressway Green Spine (Rajiv Gandhi Salai)',
     healthStatus: 'Fair',
-    area: 95000, // 95,000 sq meters
-    location: { lat: 28.6300, lng: 77.2200 },
+    area: 180000, // 180,000 sq meters
+    location: { lat: 12.9720, lng: 80.2500 }, // Perungudi - Thoraipakkam Corridor
     images: ['https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800'],
-    description: 'Continuous median vegetated strip with drought-tolerant shrubs and drip irrigation lines.',
+    description: 'Multi-tiered vehicular pollution buffer and median drip-irrigated boulevard traversing the southern IT growth corridor.',
+  },
+  {
+    type: 'green_belt',
+    name: 'Besant Nagar Coastal Green Buffer',
+    healthStatus: 'Good',
+    area: 130000, // 130,000 sq meters
+    location: { lat: 12.9996, lng: 80.2708 }, // Elliot Beach & 6th Avenue
+    images: ['https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800'],
+    description: 'Canopy corridor featuring tropical rain trees, pongamia, and flowering gulmohar trees stabilizing coastal sands and mitigating sea breezes.',
   },
 ];
 
@@ -262,110 +302,110 @@ const seedDatabase = async () => {
     let adminUser = await User.findOne({ email: 'admin@citygreen.gov' });
     if (!adminUser) {
       adminUser = await User.create({
-        name: 'Urban Green Admin',
+        name: 'Chennai Green Admin',
         email: 'admin@citygreen.gov',
         password: 'Admin@123',
         role: 'admin',
       });
-      console.log('[Seed] Created default admin user.');
+      console.log('[Seed] Created default Chennai admin user.');
     }
 
     let citizenUser = await User.findOne({ email: 'citizen@citygreen.gov' });
     if (!citizenUser) {
       citizenUser = await User.create({
-        name: 'Green Citizen',
+        name: 'Chennai Citizen Steward',
         email: 'citizen@citygreen.gov',
         password: 'Citizen@123',
         role: 'citizen',
       });
-      console.log('[Seed] Created default citizen user for reporting.');
+      console.log('[Seed] Created default Chennai citizen user for reporting.');
     }
 
-    // 1. Seed Assets (Trees, Parks, Urban Forests, Green Belts)
-    console.log('[Seed] Inserting 15 trees...');
+    // 1. Seed Assets (Trees, Parks, Urban Forests, Green Belts in Chennai)
+    console.log('[Seed] Inserting 15 Chennai trees...');
     const createdTrees = await Asset.insertMany(treesData);
 
-    console.log('[Seed] Inserting 3 parks...');
+    console.log('[Seed] Inserting 5 Chennai parks...');
     const createdParks = await Asset.insertMany(parksData);
 
-    console.log('[Seed] Inserting 2 urban forests...');
+    console.log('[Seed] Inserting 3 Chennai urban forests...');
     const createdForests = await Asset.insertMany(urbanForestsData);
 
-    console.log('[Seed] Inserting 2 green belts...');
+    console.log('[Seed] Inserting 3 Chennai green belts...');
     const createdGreenBelts = await Asset.insertMany(greenBeltsData);
 
     const totalAssets = createdTrees.length + createdParks.length + createdForests.length + createdGreenBelts.length;
-    console.log(`[Seed] Total Assets inserted: ${totalAssets}`);
+    console.log(`[Seed] Total Chennai Green Assets inserted: ${totalAssets}`);
 
     // 2. Seed 5 Maintenance Logs
-    console.log('[Seed] Inserting 5 maintenance logs...');
+    console.log('[Seed] Inserting 5 municipal maintenance logs...');
     const maintenanceData = [
       {
-        assetId: createdTrees[0]._id, // Peepal
+        assetId: createdTrees[0]._id, // Peepal at Mylapore
         date: new Date('2026-08-10'),
         action: 'Canopy Trimming & Structural Pruning',
-        performedBy: 'District Canopy Care Unit A',
-        notes: 'Pruned dead branches encroaching on pedestrian walkway; applied organic sealant to cut surfaces.',
+        performedBy: 'Greater Chennai Corporation (GCC) Zone 9 Arborist Unit',
+        notes: 'Pruned overextended branches over Kapaleeshwarar North Mada St; applied organic sealant to prune wounds.',
       },
       {
-        assetId: createdTrees[3]._id, // Roadside Neem (Diseased)
+        assetId: createdTrees[8]._id, // Rain tree at Nungambakkam (Diseased)
         date: new Date('2026-09-02'),
-        action: 'Phytosanitary Spray & Root Aeration',
-        performedBy: 'Urban Plant Pathology Team',
-        notes: 'Applied copper oxychloride fungicide for foliar disease; injected mycorrhizal biofertilizer into root zone.',
+        action: 'Phytosanitary Fungicide Spray & Root Inoculation',
+        performedBy: 'Tamil Nadu Horticultural Pathology Cell',
+        notes: 'Treated heartwood fungus with bio-fungicide formulation; introduced mycorrhizal root inoculants to enhance nutrient uptake.',
       },
       {
-        assetId: createdParks[0]._id, // Central Botanical Park
+        assetId: createdParks[0]._id, // Semmozhi Poonga
         date: new Date('2026-08-25'),
-        action: 'Drip Irrigation Telemetry Inspection',
-        performedBy: 'AquaGreen Hydrotech Specialists',
-        notes: 'Replaced 120m damaged micro-drip tubing in medicinal plant sector; sensor pressure calibrated to 1.8 bar.',
+        action: 'Micro-Drip Telemetry & Mist Nozzle Overhaul',
+        performedBy: 'Chennai Eco-Park Hydrotech Maintenance',
+        notes: 'Calibrated automated soil-moisture telemetry sensors across botanical sections; replaced 18 clogged mist nozzles.',
       },
       {
-        assetId: createdGreenBelts[1]._id, // Metro Transit Green Corridor
+        assetId: createdGreenBelts[0]._id, // Marina Green Belt
         date: new Date('2026-09-08'),
-        action: 'Soil Mulching & Weed Control',
-        performedBy: 'Metro Green Line Team #4',
-        notes: 'Laid 5cm organic woodchip mulch layer to reduce moisture evaporation and highway dust resuspension.',
+        action: 'Desalination Wash & Organic Mulching',
+        performedBy: 'Marina Coastal Vegetation Crew',
+        notes: 'Applied fresh compost and wood-chip mulching layer to conserve sub-surface moisture against coastal wind evaporation.',
       },
       {
-        assetId: createdTrees[10]._id, // Dead Sheesham
+        assetId: createdTrees[13]._id, // Dead Casuarina at Foreshore Estate
         date: new Date('2026-09-15'),
-        action: 'Arborist Risk Assessment',
-        performedBy: 'Municipal Senior Arborist',
-        notes: 'Confirmed 100% trunk desiccation. Scheduled crane-assisted section felling to eliminate storm falling risk.',
+        action: 'Hazard Arborist Inspection & Felling Order',
+        performedBy: 'GCC Disaster Preparedness & Forestry Cell',
+        notes: 'Confirmed 100% structural loss. Scheduled hydraulic crane dismantling to eliminate cyclone toppling risk.',
       },
     ];
     const createdLogs = await MaintenanceLog.insertMany(maintenanceData);
     console.log(`[Seed] Inserted ${createdLogs.length} maintenance logs.`);
 
-    // 3. Seed 3 Citizen Reports
-    console.log('[Seed] Inserting 3 citizen reports...');
+    // 3. Seed 3 Citizen Reports in Chennai
+    console.log('[Seed] Inserting 3 Chennai citizen hazard reports...');
     const reportsData = [
       {
         citizenId: citizenUser._id,
-        assetId: createdTrees[3]._id, // Roadside Neem
-        description: 'Severe yellowing and leaf loss observed on eastern branches. May require fungal inspection.',
+        assetId: createdTrees[8]._id, // Rain tree at Nungambakkam
+        description: 'Noticeable bark peeling and mushroom clusters on trunk. Branch overhanging the road appears weak in high winds.',
         photo: 'https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=600',
-        location: { lat: 28.6280, lng: 77.2210 },
+        location: { lat: 13.0605, lng: 80.2455 }, // Nungambakkam
         status: 'In Progress',
         createdAt: new Date('2026-09-01T14:30:00Z'),
       },
       {
         citizenId: citizenUser._id,
-        assetId: createdParks[0]._id, // Botanical Park
-        description: 'Main irrigation sprinkler near west lawn has broken nozzle causing localized water puddle.',
+        assetId: createdParks[0]._id, // Semmozhi Poonga
+        description: 'Irrigation drip line rupture near fragrance plant pavilion causing localized water pooling on pathway.',
         photo: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=600',
-        location: { lat: 28.6141, lng: 77.2095 },
+        location: { lat: 13.0522, lng: 80.2510 }, // Semmozhi Poonga
         status: 'Resolved',
         createdAt: new Date('2026-08-20T09:15:00Z'),
       },
       {
         citizenId: citizenUser._id,
         assetId: null, // General citizen location report
-        description: 'Broken heavy branch from uncatalogued storm tree hanging dangerously over cycling track.',
+        description: 'Heavy fallen branch blocking pedestrian cycling track along Besant Avenue after overnight coastal squall.',
         photo: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=600',
-        location: { lat: 28.6195, lng: 77.2140 },
+        location: { lat: 13.0025, lng: 80.2615 }, // Besant Avenue
         status: 'Pending',
         createdAt: new Date('2026-09-17T17:45:00Z'),
       },
@@ -374,7 +414,7 @@ const seedDatabase = async () => {
     console.log(`[Seed] Inserted ${createdReports.length} citizen reports.`);
 
     // Verification Summary
-    console.log('\n================ SEEDING VERIFICATION ================');
+    console.log('\n================ SEEDING VERIFICATION (CHENNAI) ================');
     const counts = {
       trees: await Asset.countDocuments({ type: 'tree' }),
       parks: await Asset.countDocuments({ type: 'park' }),
@@ -387,39 +427,17 @@ const seedDatabase = async () => {
 
     console.table(counts);
 
-    console.log('\n[Sample Tree Record]:');
+    console.log('\n[Sample Chennai Green Asset]:');
     const sampleTree = await Asset.findOne({ type: 'tree' });
     console.log({
       _id: sampleTree._id,
-      type: sampleTree.type,
       name: sampleTree.name,
       species: sampleTree.species,
       healthStatus: sampleTree.healthStatus,
       location: sampleTree.location,
-      age: sampleTree.age,
     });
 
-    console.log('\n[Sample Maintenance Log with Asset populated]:');
-    const sampleLog = await MaintenanceLog.findOne().populate('assetId', 'name type');
-    console.log({
-      _id: sampleLog._id,
-      action: sampleLog.action,
-      performedBy: sampleLog.performedBy,
-      assetName: sampleLog.assetId?.name,
-      assetType: sampleLog.assetId?.type,
-    });
-
-    console.log('\n[Sample Citizen Report with Citizen & Asset populated]:');
-    const sampleReport = await Report.findOne().populate('citizenId', 'name email').populate('assetId', 'name');
-    console.log({
-      _id: sampleReport._id,
-      status: sampleReport.status,
-      description: sampleReport.description,
-      reportedBy: sampleReport.citizenId?.name,
-      assetName: sampleReport.assetId ? sampleReport.assetId.name : 'General Location',
-    });
-
-    console.log('\n================ SEEDING COMPLETE ================');
+    console.log('\n================ CHENNAI SEEDING COMPLETE ================');
     process.exit(0);
   } catch (err) {
     console.error('[Seed Error]', err);

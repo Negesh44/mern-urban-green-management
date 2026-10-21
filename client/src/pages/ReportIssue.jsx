@@ -20,7 +20,7 @@ const ReportIssue = () => {
   const navigate = useNavigate();
 
   const [description, setDescription] = useState('');
-  const [location, setLocation] = useState({ lat: 28.6139, lng: 77.2090 });
+  const [location, setLocation] = useState({ lat: 13.0827, lng: 80.2707 });
   const [selectedAssetId, setSelectedAssetId] = useState('');
   const [assets, setAssets] = useState([]);
   const [photoFile, setPhotoFile] = useState(null);

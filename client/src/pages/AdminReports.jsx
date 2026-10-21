@@ -162,7 +162,7 @@ const AdminReports = () => {
     if (filteredReports.length > 0 && filteredReports[0].location?.lat) {
       return [filteredReports[0].location.lat, filteredReports[0].location.lng];
     }
-    return [28.6139, 77.2090];
+    return [13.0827, 80.2707];
   }, [filteredReports]);
 
   return (

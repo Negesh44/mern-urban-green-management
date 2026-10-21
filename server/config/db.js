@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
+const { spawn } = require('child_process');
 
-let mongod = null;
+let mongodProcess = null;
 const isVercel = Boolean(process.env.VERCEL);
 const dbDir = isVercel ? '/tmp/.db_data' : path.join(__dirname, '..', '.db_data');
 
@@ -18,6 +19,43 @@ if (!isVercel) {
 
 const DB_NAME = 'smart_urban_green';
 
+// Locate local MongoDB binary if available
+const findLocalMongoBinary = () => {
+  const binaryPaths = [
+    'C:\\Users\\DELL\\.cache\\mongodb-binaries\\mongod-x64-win32-8.2.6.exe',
+    path.join(process.env.USERPROFILE || '', '.cache', 'mongodb-binaries', 'mongod-x64-win32-8.2.6.exe'),
+  ];
+
+  for (const binPath of binaryPaths) {
+    if (binPath && fs.existsSync(binPath)) {
+      return binPath;
+    }
+  }
+  return null;
+};
+
+// Spawn background mongod service on port 27017
+const spawnLocalMongod = async () => {
+  const bin = findLocalMongoBinary();
+  if (!bin) return false;
+
+  console.log(`[MongoDB] Auto-starting local persistent MongoDB daemon (${bin}) on port 27017...`);
+  try {
+    mongodProcess = spawn(bin, ['--dbpath', dbDir, '--port', '27017', '--bind_ip', '127.0.0.1'], {
+      detached: true,
+      stdio: 'ignore',
+    });
+    mongodProcess.unref();
+
+    // Give daemon 1.8 seconds to open TCP listener
+    await new Promise((resolve) => setTimeout(resolve, 1800));
+    return true;
+  } catch (err) {
+    console.warn('[MongoDB] Could not spawn local mongod:', err.message);
+    return false;
+  }
+};
+
 const connectDB = async () => {
   // Reuse existing connection in serverless warm invocations
   if (mongoose.connection.readyState >= 1) {
@@ -28,31 +66,37 @@ const connectDB = async () => {
 
   try {
     const conn = await mongoose.connect(defaultUri, {
-      serverSelectionTimeoutMS: isVercel ? 6000 : 1500,
+      serverSelectionTimeoutMS: 2000,
     });
-    console.log(`[MongoDB] Connected to database: ${conn.connection.host} (${conn.connection.name})`);
+    console.log(`[MongoDB] Connected successfully to database: ${conn.connection.host} (${conn.connection.name})`);
     return conn;
   } catch (error) {
-    // In Vercel serverless environment, memory server cannot be spun up
     if (isVercel) {
-      console.error(
-        '[MongoDB Error] Could not connect to MONGO_URI in Vercel environment:',
-        error.message
-      );
-      console.warn(
-        '[MongoDB Tip] Please ensure MONGO_URI is configured in Vercel Project Settings (e.g., MongoDB Atlas connection string).'
-      );
+      console.error('[MongoDB Error] Could not connect to MONGO_URI in Vercel environment:', error.message);
       throw error;
     }
 
-    console.log(`[MongoDB] Database unreachable at ${defaultUri}. Initializing Embedded Persistent MongoDB Service...`);
+    // Try auto-starting local mongod if connection refused on localhost
+    if (defaultUri.includes('127.0.0.1:27017') || defaultUri.includes('localhost:27017')) {
+      const started = await spawnLocalMongod();
+      if (started) {
+        try {
+          const conn = await mongoose.connect(defaultUri, { serverSelectionTimeoutMS: 4000 });
+          console.log(`[MongoDB] Connected successfully to auto-started database: ${conn.connection.host} (${conn.connection.name})`);
+          return conn;
+        } catch (retryErr) {
+          console.warn('[MongoDB Retry] Failed after daemon spawn:', retryErr.message);
+        }
+      }
+    }
+
+    // Secondary fallback: MongoMemoryServer dynamic port
+    console.log(`[MongoDB] Initializing Embedded Persistent MongoDB Service fallback...`);
     try {
       const { MongoMemoryServer } = require('mongodb-memory-server');
-      mongod = await MongoMemoryServer.create({
+      const mongod = await MongoMemoryServer.create({
         instance: {
-          port: 27017,
           dbPath: dbDir,
-          storageEngine: 'wiredTiger',
           dbName: DB_NAME,
         },
       });
@@ -60,31 +104,10 @@ const connectDB = async () => {
       const baseUri = mongod.getUri();
       const targetUri = baseUri.endsWith('/') ? `${baseUri}${DB_NAME}` : `${baseUri}/${DB_NAME}`;
       const conn = await mongoose.connect(targetUri);
-      console.log(`[MongoDB] Embedded Persistent MongoDB running and connected at ${targetUri}`);
-
-      // Auto-seed default test users
-      const User = require('../models/User');
-      const count = await User.countDocuments();
-      if (count === 0) {
-        await User.create([
-          {
-            name: 'Urban Green Admin',
-            email: 'admin@citygreen.gov',
-            password: 'Admin@123',
-            role: 'admin',
-          },
-          {
-            name: 'Green Citizen',
-            email: 'citizen@citygreen.gov',
-            password: 'Citizen@123',
-            role: 'citizen',
-          },
-        ]);
-        console.log('[MongoDB] Auto-seeded default Admin & Citizen accounts in database.');
-      }
+      console.log(`[MongoDB] Embedded Persistent MongoDB connected at ${targetUri}`);
       return conn;
     } catch (memErr) {
-      console.error('[MongoDB Error] Failed to initialize Embedded MongoDB:', memErr.message);
+      console.error('[MongoDB Error] Database connection could not be established:', memErr.message);
     }
   }
 };

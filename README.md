@@ -1,268 +1,205 @@
-# Smart Urban Green Management System
+# Smart Urban Green Management System (Chennai Municipal Green Registry)
 
-> **Abstract:** MERN-stack web application for centralized urban green-space management with interactive mapping, environmental KPIs, and citizen reporting.
+> **Abstract:** Enterprise MERN-stack web application for centralized urban green-space management with interactive Chennai GIS mapping, environmental KPIs, arborist work order dispatch, and citizen incident reporting.
 
 [![Build Status](https://img.shields.io/badge/Build-Passing-emerald)](https://github.com/Negesh44/mern-urban-green-management)
 [![MERN Stack](https://img.shields.io/badge/Stack-MongoDB%20%7C%20Express%20%7C%20React%20%7C%20Node-teal)](https://github.com/Negesh44/mern-urban-green-management)
 [![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-v4.3-38bdf8)](https://tailwindcss.com/)
-[![Leaflet GIS](https://img.shields.io/badge/GIS-Leaflet%20%2B%20React--Leaflet-green)](https://leafletjs.com/)
+[![Leaflet GIS](https://img.shields.io/badge/GIS-Chennai%20Leaflet%20Map-green)](https://leafletjs.com/)
 [![License](https://img.shields.io/badge/License-ISC-blue)](LICENSE)
 
 ---
 
-## 🌿 Project Overview
+## 🏛️ System Architecture: The MERN Stack
 
-The **Smart Urban Green Management System** is an enterprise-grade civic platform designed for municipal governments, urban arborists, and citizens. It centralizes ecological stewardship by pairing spatial GIS tracking of municipal botanical assets with real-time phytosanitary telemetry, automated work order triage, and community environmental hazard reporting.
+This system is built strictly following the **MERN** architecture:
 
-### Core Capabilities
-- **Interactive GIS Mapping**: Spatial visualization of urban trees, municipal parks, urban forests, and linear green corridors powered by Leaflet and OpenStreetMap tiles with status-coded marker pins.
-- **Executive Analytics & Environmental KPIs**: Administrative dashboard powered by Recharts with donut charts for tree health ratios, bar charts for asset categorization, and chronological canopy survival curves.
-- **Green Asset Inventory & Registry**: Comprehensive registry recording botanical taxonomy, species, estimated age, area, condition, planting history, and GPS coordinates.
-- **Citizen Hazard Reporting**: Citizens submit geo-tagged incident reports with auto-detected GPS coordinates, photo uploads via Multer, and transparent resolution tracking.
-- **Maintenance & Work Orders**: Arborists schedule pruning, soil aeration, and pest remediation. Admins convert citizen hazard reports directly into asset maintenance tasks.
-- **Dual Navigation Experience**: Dedicated collapsible **Admin Sidebar** (`Dashboard`, `Assets`, `Reports`, `Maintenance`) for municipal officials, and an intuitive **Top Navigation Bar** (`Green Map`, `Report Hazard`, `My Reports`) for citizens.
-- **Role-Based Access Control (RBAC)**: Secure JWT authentication with distinct access policies for Citizens and Municipal Administrators.
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        R - React (Vite Frontend)                       │
+│  • Citizen Community Portal: Green Map, Taxonomy, GPS Hazard Reporter │
+│  • Admin Executive Console: Recharts KPIs, Inventory CRUD, Work Orders │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ HTTP / REST API (Axios + JWT)
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                        E - Express.js & N - Node.js                    │
+│  • Controllers: auth, assets, maintenance, reports, dashboard          │
+│  • Middleware: JWT Auth Verification, RBAC Guards, Multer File Uploads │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ Mongoose ODM
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                             M - MongoDB                                │
+│  • Collections: users, assets, maintenancelogs, reports                │
+│  • Geo-Coordinates & Geospatial Indexes: Chennai Reference Anchors     │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+- **M (MongoDB)**: Persistent NoSQL database storing User credentials (bcrypt hashed), Chennai botanical assets (species, GPS coordinates, dimensions, vitality), arborist maintenance work orders, and citizen hazard reports with photos.
+- **E (Express.js)**: High-performance RESTful API backend handling routing, validation, error handling, and business logic.
+- **R (React 19 with Vite)**: Single Page Application (SPA) with dedicated separate portals for Municipal Administrators and Citizens, animated charts (Recharts), and interactive maps (React-Leaflet).
+- **N (Node.js)**: Asynchronous runtime powering backend services, file streaming, and database communication.
 
 ---
 
-## 🏗️ Technology Stack
+## 🌿 Dual Dedicated Portals
 
-### Frontend (`/client`)
-- **Core**: React 19, Vite 8
-- **Styling**: Tailwind CSS v4, Lucide React Icons
-- **GIS & Mapping**: Leaflet v1.9, React-Leaflet v5, OpenStreetMap
-- **Visualizations**: Recharts v3.10 (Donut/Pie, Bar, and Spline Area charts)
-- **Feedback & Notifications**: `react-hot-toast` with custom dark eco theme
-- **HTTP Client**: Axios with centralized JWT interceptors
-- **Routing**: React Router v7 with protected routes
+The application features two distinct, role-separated portals:
 
-### Backend (`/server`)
-- **Runtime & Framework**: Node.js, Express.js
-- **Database**: MongoDB with Mongoose ODM (embedded persistent storage support)
-- **Authentication**: JWT (JSON Web Tokens) with HTTP Bearer strategy + Bcrypt.js password hashing
-- **File Storage**: Multer disk storage for canopy imagery and incident photos
-- **Security & Middleware**: CORS, role-based authorization guards, error handler
+### 1. 🏢 Municipal Admin Executive Portal (`/admin/dashboard`)
+*Designed for Greater Chennai Corporation (GCC) officials, arborists, and urban forestry planners:*
+- **Executive Analytics & Environmental KPIs**: Real-time charts powered by Recharts (tree health ratios, green canopy area in hectares, chronological cohort survival trends).
+- **Asset Inventory & CRUD Management**: Search, filter, add, edit, and delete Chennai trees, botanical parks, urban forests, and linear green corridors with photo upload.
+- **Spatial Canopy Map**: Full-screen GIS Leaflet map showing all assets categorized by type and health condition.
+- **Citizen Hazard Triage & Work Order Conversion (`/admin/reports`)**: Inspect community-reported tree hazards, update resolution triage states (`Pending` ➔ `In Progress` ➔ `Resolved`), and convert reports directly into arborist maintenance work orders with one click.
+- **Executive Navigation**: Permanent executive sidebar with quick navigation between Analytics, Inventory, Map, Incident Triage, and Maintenance Action Items.
 
----
-
-## 📁 Repository Structure
-
-```text
-mern-urban-green-management/
-├── package.json                   # Workspace orchestration scripts
-├── .gitignore                     # Git exclusion rules
-├── README.md                      # Comprehensive project documentation
-├── client/                        # React Frontend (Vite)
-│   ├── index.html
-│   ├── vite.config.js             # Dev server config (Port 5180 with /api proxy)
-│   └── src/
-│       ├── App.jsx                # Router configuration & Toast provider
-│       ├── main.jsx               # React DOM entry point
-│       ├── index.css              # Tailwind CSS & Leaflet map styling
-│       ├── components/
-│       │   ├── AdminSidebar.jsx   # Dedicated executive admin sidebar
-│       │   ├── Navbar.jsx         # Responsive citizen/guest top navigation
-│       │   ├── Layout.jsx         # Dual navigation shell
-│       │   ├── AssetMap.jsx       # Interactive GIS canopy map
-│       │   ├── LocationPickerMap.jsx # Click-to-pin coordinate picker
-│       │   ├── AssetFormModal.jsx # Add/Edit asset modal with photo upload
-│       │   └── ProtectedRoute.jsx # Role-based route guard
-│       ├── context/
-│       │   └── AuthContext.jsx    # Session & JWT token provider
-│       ├── pages/
-│       │   ├── Landing.jsx        # Public hero page with abstract & CTAs
-│       │   ├── Login.jsx          # Login with 1-click test credentials
-│       │   ├── Signup.jsx         # User registration with role selection
-│       │   ├── AdminDashboard.jsx # Executive KPI dashboard, inventory & charts
-│       │   ├── AdminReports.jsx   # Incident triage & work order conversion
-│       │   ├── CitizenDashboard.jsx # Public canopy map & nearby green reserves
-│       │   ├── AssetDetail.jsx    # Asset telemetry & maintenance history
-│       │   ├── ReportIssue.jsx    # Hazard reporting with geolocation
-│       │   └── MyReports.jsx      # Citizen personal report tracker
-│       └── services/
-│           └── api.js             # Centralized Axios client
-└── server/                        # Node.js Express Backend
-    ├── server.js                  # Express application entry point (Port 5000)
-    ├── seed.js                    # Database seeder (22 assets, logs, reports)
-    ├── api_requests.http          # REST client specification collection
-    ├── config/
-    │   └── db.js                  # MongoDB connection handler & fallback
-    ├── controllers/
-    │   ├── authController.js      # Signup, login, me
-    │   ├── assetController.js     # Asset CRUD & query filters
-    │   ├── maintenanceController.js # Maintenance logs & work orders
-    │   ├── reportController.js    # Citizen reporting & task conversion
-    │   └── dashboardController.js # Aggregated KPIs, charts & attention alerts
-    ├── middleware/
-    │   ├── authMiddleware.js      # JWT verification guard
-    │   ├── roleMiddleware.js      # Role restriction (Admin vs. Citizen)
-    │   └── uploadMiddleware.js    # Multer file upload handler
-    ├── models/
-    │   ├── User.js                # User account schema (admin / citizen)
-    │   ├── Asset.js               # Green asset schema (tree, park, forest, belt)
-    │   ├── MaintenanceLog.js      # Maintenance log schema
-    │   └── Report.js              # Incident hazard report schema
-    ├── routes/
-    │   ├── authRoutes.js
-    │   ├── assetRoutes.js
-    │   ├── maintenanceRoutes.js
-    │   ├── reportRoutes.js
-    │   └── dashboardRoutes.js     # Executive dashboard summary route
-    └── tests/
-        ├── api_test.js            # Asset & Maintenance test suite
-        ├── report_test.js         # Citizen reporting test suite
-        └── dashboard_test.js      # Executive dashboard & KPI test suite
-```
+### 2. 🌳 Citizen Community Portal (`/citizen/dashboard`)
+*Designed for Chennai residents, nature stewards, and civic volunteers:*
+- **Interactive Chennai Green Map**: Real-time Leaflet map centered on Chennai (`13.0827° N, 80.2707° E`) displaying botanical landmarks like Semmozhi Poonga, Guindy National Park, Chetpet EcoPark, and Marina Beach Promenade.
+- **Botanical Taxonomy & Adoption**: View tree species details, age, condition, and virtual tree adoption tracking.
+- **GPS Hazard Reporter (`/citizen/report`)**: One-tap GPS coordinate detection, interactive click-to-pin location picker, camera photo upload, and instant dispatch to municipal crews.
+- **My Reports Tracker (`/citizen/reports`)**: Live personal report tracking showing triage status badges and resolution updates.
 
 ---
 
-## 🚀 Setup & Installation Guide
+## 📍 Chennai Map Reference & Pre-Seeded Botanical Assets
 
-### 1. Clone the Repository
+The system is configured with **Chennai, Tamil Nadu, India** as its geographical and municipal reference center (`lat: 13.0827, lng: 80.2707`):
+
+### Catalogued Chennai Green Spaces:
+1. **Parks**:
+   - **Semmozhi Poonga Botanical Garden** (Cathedral Road, Teynampet - 89,000 m²)
+   - **Chetpet EcoPark & Lake** (Chetpet - 65,000 m²)
+   - **Anna Nagar Tower Park / Dr. Visveswaraya Park** (Anna Nagar - 110,000 m²)
+   - **Nageswara Rao Park** (Luz, Mylapore - 45,000 m²)
+   - **Tholkappia Poonga / Adyar Eco Park** (Adyar Estuary - 350,000 m²)
+2. **Urban Forests & Reserves**:
+   - **Guindy National Park & Biosphere Sanctuary** (Guindy - 2.7 km²)
+   - **Nanmangalam Reserve Forest Sanctuary** (South Chennai - 3.2 km²)
+   - **Pallikaranai Marshland Conservation Reserve** (Pallikaranai - 1.2 km²)
+3. **Linear Green Belts**:
+   - **Marina Beach Promenade Coastal Green Belt** (Kamarajar Salai)
+   - **OMR IT Expressway Green Corridor** (Rajiv Gandhi Salai)
+   - **Besant Nagar & Elliot's Coastal Buffer** (6th Avenue)
+4. **Heritage Trees**:
+   - Centuries-old Peepal at Kapaleeshwarar Temple Grove, Mylapore
+   - Historic Great Banyan at Theosophical Society, Adyar
+   - Coastal Casuarina at Marina Beach
+   - Ancient Neem at San Thome High Road
+   - Yellow Copperpod (Iyalvagai) at IIT Madras Campus Canopy
+   - Cannonball Tree (Nagalingam) at Panagal Park, T. Nagar
+   - Rain Trees (Samanea saman) along Nungambakkam High Road
+
+---
+
+## 💾 MongoDB Setup & Data Persistence Steps
+
+To ensure user accounts, passwords, hazard reports, and tree records are saved permanently in MongoDB, choose one of the following two options:
+
+### Option A: Free Cloud MongoDB Atlas (Recommended — 3 Minutes, Zero Windows Install)
+
+1. **Create Free Account**:
+   - Sign up at [https://cloud.mongodb.com](https://cloud.mongodb.com).
+   - Create a free **M0 Sandbox Cluster** (select AWS / Mumbai `ap-south-1` region for lowest latency).
+2. **Configure Database Access**:
+   - In **Database Access**, create a user (e.g. `chennai_admin`) with a secure password.
+3. **Configure Network Access**:
+   - In **Network Access**, click **Add IP Address** ➔ Select **Allow Access From Anywhere** (`0.0.0.0/0`).
+4. **Get Connection String**:
+   - Click **Connect** ➔ **Drivers** (Node.js).
+   - Copy connection URI (looks like `mongodb+srv://chennai_admin:<password>@cluster0.xxx.mongodb.net/?retryWrites=true&w=majority`).
+5. **Add to `.env`**:
+   - Open `server/.env` and update:
+     ```env
+     PORT=5000
+     MONGO_URI=mongodb+srv://chennai_admin:YOUR_PASSWORD@cluster0.xxx.mongodb.net/smart_urban_green?retryWrites=true&w=majority
+     JWT_SECRET=super_secret_urban_green_jwt_key_2026
+     NODE_ENV=development
+     ```
+6. **Seed Chennai Database**:
+   ```bash
+   node server/seed.js
+   ```
+
+---
+
+### Option B: Local Windows MongoDB Community Service
+
+1. **Download & Install**:
+   - Download **MongoDB Community Server** (.msi) from [MongoDB Download Center](https://www.mongodb.com/try/download/community).
+   - Check the box **"Install MongoDB as a Windows Service"** and install **MongoDB Compass** (optional GUI).
+2. **Start the Windows Service**:
+   - Open PowerShell as Administrator and run:
+     ```powershell
+     net start MongoDB
+     ```
+3. **Verify in `server/.env`**:
+   ```env
+   PORT=5000
+   MONGO_URI=mongodb://127.0.0.1:27017/smart_urban_green
+   JWT_SECRET=super_secret_urban_green_jwt_key_2026
+   NODE_ENV=development
+   ```
+4. **Seed Chennai Database**:
+   ```bash
+   node server/seed.js
+   ```
+
+---
+
+## 🚀 Running the Project
+
+### 1. Install Dependencies
 ```bash
-git clone https://github.com/Negesh44/mern-urban-green-management.git
-cd mern-urban-green-management
+# Install root, server, and client dependencies
+npm run install-all
 ```
 
-### 2. Install Dependencies
+### 2. Seed Database with Chennai Green Assets
 ```bash
-# Install root orchestration dependencies
-npm install
-
-# Install server dependencies
-cd server
-npm install
-
-# Install client dependencies
-cd ../client
-npm install
-cd ..
+npm run seed
 ```
 
-### 3. Environment Variables Configuration
-In the `server/` directory, create a `.env` file (referencing `.env.example`):
-```env
-PORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/smart_urban_green
-JWT_SECRET=super_secret_urban_green_jwt_key_2026_production
-JWT_EXPIRE=30d
-```
-
-### 4. Seed the Database
-Populates 22 botanical assets (trees, parks, urban forests, green belts), 5 maintenance logs, 3 citizen reports, and default test accounts:
+### 3. Start Both Frontend & Backend Concurrently
 ```bash
-cd server
-node seed.js
-cd ..
-```
-
-### 5. Start Both Applications
-Open two terminal windows:
-
-**Terminal 1 — Backend Server:**
-```bash
-cd server
 npm run dev
-# Running on http://localhost:5000
 ```
-
-**Terminal 2 — Frontend Application:**
-```bash
-cd client
-npm run dev
-# Running on http://localhost:5180
-```
+- **Backend API**: Running at `http://localhost:5000`
+- **Frontend SPA**: Running at `http://localhost:5180`
 
 ---
 
-## 🔑 Demonstration & Evaluation Accounts
+## 🔑 Demonstration Accounts
 
-The database includes pre-configured accounts for testing with 1-click Quick-Fill buttons on the Login page:
+The database comes pre-seeded with accounts for both portals:
 
-| Role | Email | Password | Access Privileges |
-| :--- | :--- | :--- | :--- |
-| **Municipal Admin** | `admin@citygreen.gov` | `Admin@123` | Executive KPI Dashboard, Asset CRUD, Incident Triage, Work Order Conversion |
-| **Community Citizen** | `citizen@citygreen.gov` | `Citizen@123` | Interactive Green Map, Report Hazards (GPS + Photo), Track My Reports |
-
----
-
-## 📡 Complete REST API Route Summary
-
-### Authentication (`/api/auth`)
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/signup` | Public | Register new citizen or administrator account |
-| `POST` | `/api/auth/login` | Public | Authenticate user, return signed JWT and profile |
-| `GET` | `/api/auth/me` | Private | Retrieve authenticated session profile |
-
-### Assets Management (`/api/assets`)
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/assets` | Private | Retrieve all assets (supports `?type=`, `?healthStatus=`, `?search=`) |
-| `GET` | `/api/assets/:id` | Private | Retrieve single asset with populated maintenance history |
-| `POST` | `/api/assets` | Admin | Create green asset (supports Multer image uploads) |
-| `PUT` | `/api/assets/:id` | Admin | Update asset attributes, dimensions, or condition |
-| `DELETE` | `/api/assets/:id` | Admin | Delete asset and cascade remove associated logs |
-
-### Arboricultural Maintenance (`/api/maintenance`)
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/maintenance/:assetId` | Private | Retrieve chronological maintenance history for asset |
-| `POST` | `/api/maintenance` | Admin | Log arboricultural activity (pruning, irrigation, spraying) |
-
-### Citizen Incident Reporting (`/api/reports`)
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/reports` | Citizen | Submit hazard report with GPS coords and photo upload |
-| `GET` | `/api/reports` | Private | Citizen views own reports; Admin views all municipal reports |
-| `PUT` | `/api/reports/:id` | Admin | Update status (`Pending`, `In Progress`, `Resolved`) |
-| `POST` | `/api/reports/:id/convert` | Admin | Convert incident report directly into an asset maintenance task |
-
-### Executive Analytics & KPIs (`/api/dashboard`)
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/dashboard/summary` | Admin | Aggregated metrics: assets by type, health ratios, green area, pending reports, 6-month overdue maintenance, and survival trends |
+| Portal | Email | Password | Role | Permissions |
+| :--- | :--- | :--- | :--- | :--- |
+| **Admin Executive Console** | `admin@citygreen.gov` | `Admin@123` | `admin` | Full Analytics, Asset CRUD, Incident Triage, Work Order Dispatch |
+| **Citizen Green Portal** | `citizen@citygreen.gov` | `Citizen@123` | `citizen` | Chennai Canopy Map, GPS Incident Reporting, Personal Report Tracking |
 
 ---
 
-## 🧪 Automated Verification Suite
+## 📡 REST API Summary
 
-Run the end-to-end integration test suites:
-```bash
-# 1. Asset & Maintenance CRUD Test Suite (12 tests)
-node server/tests/api_test.js
-
-# 2. Citizen Reporting & Task Conversion Test Suite (9 tests)
-node server/tests/report_test.js
-
-# 3. Executive Dashboard & KPI Aggregation Test Suite
-node server/tests/dashboard_test.js
-
-# 4. Frontend Production Build Check
-cd client && npm run build
-```
-
----
-
-## 🚀 Deployment on Vercel
-
-The application is fully pre-configured for **1-Click Full-Stack Deployment on Vercel**:
-- **Frontend SPA**: Built via Vite into `client/dist` and served via Vercel Edge CDN.
-- **Backend API**: Express REST API executed as a Serverless Function via `api/index.js` routed to `/api/*`.
-- **SPA Rewrites**: Pre-configured in `vercel.json` and `client/vercel.json` to prevent 404s on route refresh.
-
-### Quick Setup Steps:
-1. Push your repository to GitHub: `https://github.com/Negesh44/mern-urban-green-management`.
-2. In [Vercel Dashboard](https://vercel.com/new), import your repository.
-3. Configure the following **Environment Variables** in Vercel:
-   - `MONGO_URI`: Your MongoDB Atlas cluster connection string (obtained from Atlas dashboard).
-   - `JWT_SECRET`: A secure signing key.
-   - `NODE_ENV`: `production`.
-4. Click **Deploy**.
-
-For detailed setup instructions, including MongoDB Atlas free cluster creation and database seeding, refer to the full **[Vercel Deployment Guide](./VERCEL_DEPLOYMENT_GUIDE.md)**.
+| Route | Method | Role | Description |
+| :--- | :--- | :--- | :--- |
+| `/api/auth/signup` | `POST` | Public | Register new citizen or admin account |
+| `/api/auth/login` | `POST` | Public | Authenticate user & receive JWT token |
+| `/api/auth/me` | `GET` | Authenticated | Retrieve current user profile |
+| `/api/assets` | `GET` | Authenticated | List all green assets (filter by type/health) |
+| `/api/assets` | `POST` | Admin | Add new green asset with photos |
+| `/api/assets/:id` | `PUT` | Admin | Edit asset condition or details |
+| `/api/assets/:id` | `DELETE` | Admin | Delete asset and cascade remove logs |
+| `/api/reports` | `POST` | Citizen | Submit GPS-tagged hazard report with photo |
+| `/api/reports` | `GET` | Authenticated | List reports (Citizen: own; Admin: all) |
+| `/api/reports/:id` | `PUT` | Admin | Update status (`Pending` ➔ `In Progress` ➔ `Resolved`) |
+| `/api/reports/:id/convert`| `POST` | Admin | Convert hazard report into maintenance task |
+| `/api/dashboard/summary` | `GET` | Admin | Aggregated environmental KPIs & survival curves |
 
 ---
 
 ## 📄 License
-This project is licensed under the ISC License.
+Licensed under the ISC License.

@@ -15,8 +15,8 @@ const AssetFormModal = ({ isOpen, onClose, asset = null, onSaved }) => {
     area: '',
     healthStatus: 'Healthy',
     description: '',
-    lat: 28.6139,
-    lng: 77.2090,
+    lat: 13.0827,
+    lng: 80.2707,
   });
 
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -34,8 +34,8 @@ const AssetFormModal = ({ isOpen, onClose, asset = null, onSaved }) => {
         area: asset.area !== undefined ? asset.area : '',
         healthStatus: asset.healthStatus || 'Healthy',
         description: asset.description || '',
-        lat: asset.location?.lat || 28.6139,
-        lng: asset.location?.lng || 77.2090,
+        lat: asset.location?.lat || 13.0827,
+        lng: asset.location?.lng || 80.2707,
       });
     } else {
       setFormData({
@@ -47,8 +47,8 @@ const AssetFormModal = ({ isOpen, onClose, asset = null, onSaved }) => {
         area: '',
         healthStatus: 'Healthy',
         description: '',
-        lat: 28.6139,
-        lng: 77.2090,
+        lat: 13.0827,
+        lng: 80.2707,
       });
     }
     setSelectedFiles([]);

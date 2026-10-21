@@ -1,16 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, PlusCircle, AlertCircle, Heart, Award, Check, Eye, Trees, Sparkles, Filter } from 'lucide-react';
+import {
+  MapPin,
+  PlusCircle,
+  AlertCircle,
+  Heart,
+  Award,
+  Check,
+  Eye,
+  Trees,
+  Sparkles,
+  ArrowRight,
+  Shield,
+  FileText,
+  Compass,
+} from 'lucide-react';
 import API from '../services/api';
 import AssetMap from '../components/AssetMap';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const CitizenDashboard = () => {
+  const { user } = useAuth();
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [adoptedCount, setAdoptedCount] = useState(2);
+  const [reportSubmitting, setReportSubmitting] = useState(false);
   const [reportSubmitted, setReportSubmitted] = useState(false);
   const [reportText, setReportText] = useState('');
-  const [reportLocation, setReportLocation] = useState('Central Park Sector 4');
+  const [reportLocation, setReportLocation] = useState('Semmozhi Poonga / Cathedral Road');
 
   useEffect(() => {
     fetchAssets();
@@ -28,39 +46,92 @@ const CitizenDashboard = () => {
     }
   };
 
-  const handleReportSubmit = (e) => {
+  const handleQuickReportSubmit = async (e) => {
     e.preventDefault();
-    setReportSubmitted(true);
-    setTimeout(() => {
-      setReportSubmitted(false);
-      setReportText('');
-    }, 5000);
+    if (!reportText.trim()) {
+      toast.error('Please enter an issue description');
+      return;
+    }
+
+    setReportSubmitting(true);
+    try {
+      await API.post('/api/reports', {
+        description: `[Quick Report - ${reportLocation}]: ${reportText.trim()}`,
+        location: { lat: 13.0827, lng: 80.2707 }, // Default Chennai Central
+      });
+
+      setReportSubmitted(true);
+      toast.success('Hazard alert registered successfully! Municipal arborists notified.');
+      setTimeout(() => {
+        setReportSubmitted(false);
+        setReportText('');
+      }, 5000);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to submit report. Please log in.');
+    } finally {
+      setReportSubmitting(false);
+    }
   };
 
   return (
     <div className="space-y-8 py-6">
+      {/* If logged in user is admin, show convenient portal switcher banner */}
+      {user?.role === 'admin' && (
+        <div className="p-4 rounded-2xl bg-teal-950/60 border border-teal-800/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-teal-200">
+          <div className="flex items-center gap-2.5">
+            <Shield className="w-4 h-4 text-teal-400" />
+            <span>
+              You are logged in as an <strong>Administrator</strong> currently previewing the <strong>Citizen Community Portal</strong>.
+            </span>
+          </div>
+          <Link
+            to="/admin/dashboard"
+            className="px-3.5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold transition-all shadow-md flex items-center gap-1.5 shrink-0"
+          >
+            <span>Open Executive Admin Console</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
         <div>
           <div className="flex items-center gap-2 text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-1">
             <Award className="w-4 h-4" />
-            <span>Citizen Stewardship & Ecological Telemetry</span>
+            <span>Citizen Community Portal &bull; Chennai Urban Green Registry</span>
           </div>
-          <h1 className="text-3xl font-extrabold text-white">Urban Canopy & Green Reserve</h1>
+          <h1 className="text-3xl font-extrabold text-white">Chennai Canopy & Green Reserves</h1>
           <p className="text-xs text-slate-400 mt-1">
-            Explore public parks, locate heritage tree specimens, and report environmental hazards to city arborists.
+            Explore Chennai's parks, heritage trees, mangrove sanctuaries, and report environmental hazards to municipal arborists.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="px-4 py-2 rounded-2xl bg-emerald-950/80 border border-emerald-800/60 text-emerald-300 text-xs font-semibold flex items-center gap-2 shadow-lg shadow-emerald-950/40">
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            to="/citizen/report"
+            className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-amber-950/50 transition-all hover:scale-105"
+          >
+            <AlertCircle className="w-4 h-4" />
+            <span>GPS Hazard Reporter</span>
+          </Link>
+
+          <Link
+            to="/citizen/reports"
+            className="px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-2 transition-all"
+          >
+            <FileText className="w-4 h-4 text-teal-400" />
+            <span>My Reports</span>
+          </Link>
+
+          <div className="px-4 py-2.5 rounded-2xl bg-emerald-950/80 border border-emerald-800/60 text-emerald-300 text-xs font-semibold flex items-center gap-2 shadow-lg shadow-emerald-950/40">
             <Heart className="w-4 h-4 text-emerald-400 fill-emerald-400" />
             <span>Adopted Trees: {adoptedCount}</span>
           </div>
         </div>
       </div>
 
-      {/* 1. Interactive Leaflet GIS Map */}
+      {/* 1. Interactive Leaflet GIS Map centered on Chennai */}
       <section>
         <AssetMap assets={assets} loading={loading} onRefresh={fetchAssets} />
       </section>
@@ -72,10 +143,10 @@ const CitizenDashboard = () => {
           <div className="flex items-center justify-between pb-2 border-b border-slate-800">
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <Trees className="w-5 h-5 text-emerald-400" />
-              <span>Catalogued Municipal Green Reserves</span>
+              <span>Catalogued Chennai Green Reserves & Flora</span>
             </h3>
             <span className="text-xs text-slate-400 font-mono">
-              {assets.length} Public Assets
+              {assets.length} Public Reserves
             </span>
           </div>
 
@@ -109,13 +180,13 @@ const CitizenDashboard = () => {
                   )}
 
                   <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
-                    {asset.description || 'Monitored municipal greenery.'}
+                    {asset.description || 'Monitored municipal greenery in Chennai.'}
                   </p>
                 </div>
 
                 <div className="pt-2 flex items-center justify-between border-t border-slate-800/60">
                   <span className="text-[10px] font-mono text-slate-500">
-                    📍 {asset.location?.lat.toFixed(3)}, {asset.location?.lng.toFixed(3)}
+                    📍 {asset.location?.lat.toFixed(4)}, {asset.location?.lng.toFixed(4)}
                   </span>
                   <Link
                     to={`/assets/${asset._id}`}
@@ -130,32 +201,35 @@ const CitizenDashboard = () => {
           </div>
         </div>
 
-        {/* Citizen Hazard Report Form (Col 3) */}
+        {/* Citizen Hazard Quick Report Form (Col 3) */}
         <div className="space-y-4">
           <div className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-4 shadow-xl">
-            <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold uppercase tracking-wider">
-              <AlertCircle className="w-4 h-4" />
-              <span>Report Urban Green Hazard</span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold uppercase tracking-wider">
+                <AlertCircle className="w-4 h-4" />
+                <span>Quick Incident Report</span>
+              </div>
+              <span className="text-[10px] text-slate-400 font-mono">Chennai Wards</span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Found a broken tree limb, diseased foliage, or irrigation leak? Alert the municipal green maintenance team.
+              Spotted a fallen branch, diseased tree, or water leak in Chennai? Send an immediate report to Greater Chennai Corporation arborists.
             </p>
 
             {reportSubmitted ? (
               <div className="p-4 rounded-xl bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs flex items-center gap-2 animate-fadeIn">
                 <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Hazard report submitted! A municipal arborist has been dispatched.</span>
+                <span>Hazard report submitted! A municipal arborist team has been alerted.</span>
               </div>
             ) : (
-              <form onSubmit={handleReportSubmit} className="space-y-3">
+              <form onSubmit={handleQuickReportSubmit} className="space-y-3">
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-300 uppercase mb-1">
-                    Location / Landmark
+                    Chennai Location / Area
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g., Central Park West Trail"
+                    placeholder="e.g., Semmozhi Poonga, Anna Nagar Tower, Adyar"
                     value={reportLocation}
                     onChange={(e) => setReportLocation(e.target.value)}
                     className="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-emerald-500"
@@ -169,7 +243,7 @@ const CitizenDashboard = () => {
                   <textarea
                     required
                     rows={3}
-                    placeholder="Describe issue (e.g. fallen branch blocking walkway, pest infestation)..."
+                    placeholder="Describe issue (e.g. fallen branch blocking road, fungal infestation)..."
                     value={reportText}
                     onChange={(e) => setReportText(e.target.value)}
                     className="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-emerald-500 resize-none"
@@ -178,13 +252,23 @@ const CitizenDashboard = () => {
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  disabled={reportSubmitting}
+                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white font-semibold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <PlusCircle className="w-4 h-4" />
-                  <span>Submit Incident Alert</span>
+                  <span>{reportSubmitting ? 'Registering...' : 'Submit Incident Alert'}</span>
                 </button>
               </form>
             )}
+
+            <div className="pt-3 border-t border-slate-800/80 text-center">
+              <Link
+                to="/citizen/report"
+                className="text-xs text-amber-400 hover:text-amber-300 font-semibold inline-flex items-center gap-1"
+              >
+                <span>Need GPS coordinates & photo upload? Use full report &rarr;</span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

@@ -80,8 +80,8 @@ const AssetMap = ({ assets = [], loading = false, onRefresh }) => {
     });
   }, [assets, typeFilter, healthFilter]);
 
-  // Center coordinate calculation
-  const defaultCenter = [28.6139, 77.2090];
+  // Center coordinate calculation (Default: Chennai, Tamil Nadu, India)
+  const defaultCenter = [13.0827, 80.2707];
   const center = useMemo(() => {
     if (filteredAssets.length > 0 && filteredAssets[0].location?.lat && filteredAssets[0].location?.lng) {
       return [filteredAssets[0].location.lat, filteredAssets[0].location.lng];

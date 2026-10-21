@@ -184,63 +184,100 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Demo Credentials & Quick Access Card */}
-      <section className="p-8 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
-          <div>
-            <div className="flex items-center gap-2 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Evaluation & Demonstration Portal</span>
-            </div>
-            <h3 className="text-xl font-bold text-white mt-1">Pre-Seeded Evaluation Credentials</h3>
+      {/* Dedicated Portals Section */}
+      <section className="space-y-6">
+        <div className="text-center max-w-2xl mx-auto space-y-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 text-[11px] font-bold uppercase tracking-wider">
+            <Users className="w-3.5 h-3.5" />
+            <span>Dual-Role Architectural Architecture</span>
           </div>
-          <Link
-            to="/login"
-            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors w-fit"
-          >
-            Launch System Login
-          </Link>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+            Dedicated Administrative & Citizen Portals
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400">
+            Separate portals tailored for municipal governance workflows and civic community participation.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          {/* Admin Credentials */}
-          <div className="p-5 rounded-2xl bg-slate-950 border border-teal-900/40 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-teal-400 uppercase tracking-wide">
-                1. Municipal Administrator Account
-              </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-teal-950 text-teal-300 border border-teal-800">
-                ADMIN ROLE
-              </span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* 1. Admin Portal Card */}
+          <div className="p-7 rounded-3xl bg-slate-900/90 border border-teal-800/60 shadow-xl flex flex-col justify-between space-y-6 relative overflow-hidden group hover:border-teal-500/60 transition-all">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="p-3 rounded-2xl bg-teal-950 text-teal-400 border border-teal-800/80">
+                  <ShieldCheck className="w-7 h-7" />
+                </div>
+                <span className="text-[11px] font-mono px-3 py-1 rounded-full bg-teal-950 text-teal-300 border border-teal-800 font-bold uppercase">
+                  Admin Executive Portal
+                </span>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Municipal Admin Console</h3>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                  Full administrative command center for Greater Chennai Corporation officials and arborists. Monitor environmental KPIs, manage tree/park inventories, triage citizen hazard reports, and issue maintenance work orders.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-800 text-xs font-mono space-y-1.5 text-slate-300">
+                <div className="text-[10px] uppercase font-bold text-teal-400 tracking-wider">Pre-Seeded Admin Credentials:</div>
+                <div>Email: <span className="text-teal-300">admin@citygreen.gov</span></div>
+                <div>Password: <span className="text-teal-300">Admin@123</span></div>
+              </div>
             </div>
-            <p className="text-xs text-slate-400">
-              Access the executive KPI dashboard, asset inventory table CRUD, incident triage dispatch, and work order creation.
-            </p>
-            <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 font-mono text-xs space-y-1 text-slate-200">
-              <div>Email: <span className="text-teal-300">admin@citygreen.gov</span></div>
-              <div>Password: <span className="text-teal-300">Admin@123</span></div>
+
+            <div className="pt-2 flex items-center gap-3">
+              <Link
+                to="/admin/dashboard"
+                className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-bold text-xs text-center shadow-lg transition-all flex items-center justify-center gap-2 group-hover:shadow-teal-900/40"
+              >
+                <span>Launch Admin Console</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
 
-          {/* Citizen Credentials */}
-          <div className="p-5 rounded-2xl bg-slate-950 border border-emerald-900/40 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-emerald-400 uppercase tracking-wide">
-                2. Community Citizen Account
-              </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">
-                CITIZEN ROLE
-              </span>
+          {/* 2. Citizen Portal Card */}
+          <div className="p-7 rounded-3xl bg-slate-900/90 border border-emerald-800/60 shadow-xl flex flex-col justify-between space-y-6 relative overflow-hidden group hover:border-emerald-500/60 transition-all">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="p-3 rounded-2xl bg-emerald-950 text-emerald-400 border border-emerald-800/80">
+                  <Trees className="w-7 h-7" />
+                </div>
+                <span className="text-[11px] font-mono px-3 py-1 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800 font-bold uppercase">
+                  Citizen Community Portal
+                </span>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Citizen Green Portal</h3>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                  Interactive ecological registry for Chennai residents. Explore the city-wide GIS canopy map, examine botanical species details, adopt trees, and file geo-located hazard alerts with camera photo uploads.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-800 text-xs font-mono space-y-1.5 text-slate-300">
+                <div className="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Pre-Seeded Citizen Credentials:</div>
+                <div>Email: <span className="text-emerald-300">citizen@citygreen.gov</span></div>
+                <div>Password: <span className="text-emerald-300">Citizen@123</span></div>
+              </div>
             </div>
-            <p className="text-xs text-slate-400">
-              Browse public green reserves, view botanical taxonomy, file geolocation-tagged hazard reports, and track resolution.
-            </p>
-            <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 font-mono text-xs space-y-1 text-slate-200">
-              <div>Email: <span className="text-emerald-300">citizen@citygreen.gov</span></div>
-              <div>Password: <span className="text-emerald-300">Citizen@123</span></div>
+
+            <div className="pt-2 flex items-center gap-3">
+              <Link
+                to="/citizen/dashboard"
+                className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-bold text-xs text-center shadow-lg transition-all flex items-center justify-center gap-2 group-hover:shadow-emerald-900/40"
+              >
+                <span>Launch Citizen Portal</span>
+                <Globe className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Backend Status Card */}
+      <section className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 shadow-xl space-y-4">
 
         {/* Backend Connectivity Status Bar */}
         <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 flex items-center justify-between gap-4 text-xs">
