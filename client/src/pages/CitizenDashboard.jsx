@@ -26,7 +26,6 @@ const CitizenDashboard = () => {
   const { user } = useAuth();
   const [assets, setAssets] = useState(chennaiAssetsFallback);
   const [loading, setLoading] = useState(false);
-  const [viewMode, setViewMode] = useState('3d'); // '3d', 'map', 'both'
   const [adoptedCount, setAdoptedCount] = useState(2);
   const [reportSubmitting, setReportSubmitting] = useState(false);
   const [reportSubmitted, setReportSubmitted] = useState(false);
@@ -140,76 +139,32 @@ const CitizenDashboard = () => {
         </div>
       </div>
 
-      {/* View Mode Switcher Header */}
+      {/* Interactive 3D Digital Twin & Geospatial Map Dual View */}
       <section className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl glass-panel">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-emerald-950/60">
+          <div className="flex items-center gap-2.5">
             <Sparkles className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs font-bold text-white uppercase tracking-wider">Telemetry Visualizer Mode</span>
+            <h2 className="text-xl font-extrabold text-white font-heading">
+              3D Flora Canopy Digital Twin & Geospatial GIS Map
+            </h2>
+            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800">
+              Interactive Dual View
+            </span>
           </div>
-
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-950/90 border border-emerald-900/40">
-            <button
-              onClick={() => setViewMode('3d')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                viewMode === '3d'
-                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Trees className="w-3.5 h-3.5" />
-              <span>3D Digital Twin</span>
-            </button>
-
-            <button
-              onClick={() => setViewMode('map')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                viewMode === 'map'
-                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <MapPin className="w-3.5 h-3.5" />
-              <span>Geospatial Map</span>
-            </button>
-
-            <button
-              onClick={() => setViewMode('both')}
-              className={`hidden sm:flex px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all items-center gap-1.5 cursor-pointer ${
-                viewMode === 'both'
-                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Compass className="w-3.5 h-3.5" />
-              <span>Dual View</span>
-            </button>
-          </div>
+          <span className="text-xs text-slate-400 font-mono hidden sm:inline">
+            Three.js Engine &bull; 38 Catalogued Chennai Reserves
+          </span>
         </div>
 
-        {/* 3D Visualizer / Map Display */}
-        {viewMode === '3d' && (
-          <div className="animate-fadeIn">
+        {/* Permanent Dual View Grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
+          <div className="h-full">
             <ThreeTreeCanvas />
           </div>
-        )}
-
-        {viewMode === 'map' && (
-          <div className="animate-fadeIn">
+          <div className="h-full">
             <AssetMap assets={assets} loading={loading} onRefresh={fetchAssets} />
           </div>
-        )}
-
-        {viewMode === 'both' && (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 animate-fadeIn">
-            <div>
-              <ThreeTreeCanvas />
-            </div>
-            <div>
-              <AssetMap assets={assets} loading={loading} onRefresh={fetchAssets} />
-            </div>
-          </div>
-        )}
+        </div>
       </section>
 
       {/* 2. Highlights Grid & Citizen Hazard Reporting */}

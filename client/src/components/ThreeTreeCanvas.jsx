@@ -539,18 +539,18 @@ const ThreeTreeCanvas = ({ selectedTreeId = 'peepal', onSpecimenChange }) => {
       {/* 3D WebGL Canvas Viewport */}
       <div
         ref={containerRef}
-        className="w-full h-[400px] sm:h-[480px] cursor-grab active:cursor-grabbing relative select-none"
+        className="w-full h-[520px] cursor-grab active:cursor-grabbing relative select-none"
         title="Click and drag to rotate 3D specimen"
       />
 
-      {/* Mouse Interaction Hint */}
-      <div className="absolute bottom-20 left-6 pointer-events-none text-[11px] text-slate-400/80 flex items-center gap-2 bg-slate-950/70 px-3 py-1 rounded-full border border-slate-800 backdrop-blur-sm">
-        <Compass className="w-3.5 h-3.5 text-emerald-400 animate-spin" style={{ animationDuration: '8s' }} />
-        <span>Click & drag to rotate 3D specimen</span>
+      {/* Mouse Interaction Hint (Placed cleanly near top left below title) */}
+      <div className="absolute top-24 left-4 sm:left-6 pointer-events-none text-[10px] text-slate-400 flex items-center gap-1.5 bg-slate-950/85 px-2.5 py-1 rounded-full border border-emerald-900/50 backdrop-blur-md shadow-lg">
+        <Compass className="w-3 h-3 text-emerald-400 animate-spin" style={{ animationDuration: '8s' }} />
+        <span>Click & drag to rotate</span>
       </div>
 
       {/* Bottom Telemetry Overlay & Visualization Controls */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 bg-gradient-to-t from-slate-950/95 via-slate-950/80 to-transparent flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-emerald-950/60">
+      <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 bg-gradient-to-t from-slate-950/95 via-slate-950/80 to-transparent flex flex-wrap items-center justify-between gap-3 border-t border-emerald-950/60">
         {/* Real-time Telemetry Metrics */}
         <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center sm:text-left w-full sm:w-auto">
           <div className="px-3 py-1.5 rounded-xl bg-slate-900/80 border border-emerald-900/40">
