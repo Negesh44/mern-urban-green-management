@@ -83,25 +83,6 @@ const CitizenDashboard = () => {
 
   return (
     <div className="space-y-8 py-6">
-      {/* If logged in user is admin, show convenient portal switcher banner */}
-      {user?.role === 'admin' && (
-        <div className="p-4 rounded-2xl bg-teal-950/60 border border-teal-800/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-teal-200">
-          <div className="flex items-center gap-2.5">
-            <Shield className="w-4 h-4 text-teal-400" />
-            <span>
-              You are logged in as an <strong>Administrator</strong> currently previewing the <strong>Citizen Community Portal</strong>.
-            </span>
-          </div>
-          <Link
-            to="/admin/dashboard"
-            className="px-3.5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold transition-all shadow-md flex items-center gap-1.5 shrink-0"
-          >
-            <span>Open Executive Admin Console</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-      )}
-
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
         <div>
