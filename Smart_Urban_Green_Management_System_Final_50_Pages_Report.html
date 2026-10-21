@@ -10,11 +10,6 @@
       margin-bottom: 1.0in;
       margin-left: 1.25in;
       margin-right: 1.0in;
-      @bottom-right {
-        content: counter(page);
-        font-family: "Times New Roman", Times, serif;
-        font-size: 11pt;
-      }
     }
     *, *::before, *::after {
       box-sizing: border-box;
@@ -117,7 +112,7 @@
     }
     .center-img {
       text-align: center;
-      margin: 12px 0 8px 0;
+      margin: 10px 0 6px 0;
     }
     .center-img img {
       max-width: 100%;
@@ -160,9 +155,25 @@
     }
     .page-footer {
       position: absolute;
-      bottom: 20mm;
+      bottom: 15mm;
       right: 25mm;
       font-size: 11pt;
+      font-family: "Times New Roman", Times, serif;
+    }
+    .cert-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 10px;
+    }
+    .cert-header img {
+      width: 100px;
+      margin-right: 20px;
+    }
+    .cert-header-text {
+      text-align: center;
     }
   </style>
 </head>
@@ -171,7 +182,7 @@
   <div class="print-bar">
     <div>
       <strong>Smart Urban Green Management System — 50-Page Academic Project Report</strong>
-      <div style="font-size: 12px; color: #94a3b8;">Author: Negesh Bala M (310624148062) | Dept of AIML | Easwari Engineering College</div>
+      <div style="font-size: 12px; color: #94a3b8;">Author: Negesh Bala M (310624148062) | Dept of CSE (AI & ML) | Easwari Engineering College</div>
     </div>
     <button class="print-btn" onclick="window.print()">Print / Save as 50-Page PDF</button>
   </div>
@@ -182,18 +193,18 @@
       <h2 style="font-size: 14pt; font-weight: bold; margin-bottom: 25px;">A PROJECT REPORT</h2>
       <p style="font-size: 12pt; margin-bottom: 8px;">Submitted by</p>
       <p style="font-size: 15pt; font-weight: bold; margin-bottom: 25px;">
-        NEGESH BALA M<br>
-        <span style="font-size: 13pt;">(Reg. No: 310624148062)</span>
+        NEGESH BALA M - 310624148062
       </p>
       <p style="font-size: 12pt; line-height: 1.6; margin-bottom: 25px;">
         in partial fulfillment for the award of the Degree<br>
         of<br>
         <strong>BACHELOR OF TECHNOLOGY</strong><br>
         in<br>
-        <strong>ARTIFICIAL INTELLIGENCE AND MACHINE LEARNING</strong>
+        <strong>COMPUTER SCIENCE AND ENGINEERING (AI & ML)</strong><br>
+        <span style="font-weight: bold;">2311CSE503R - FULL STACK DEVELOPMENT</span>
       </p>
       <div class="center-img" style="margin: 20px 0;">
-        <img src="college_logo_p1_0.png" style="width: 130px;" alt="Easwari Engineering College Logo">
+        <img src="college_logo_p1_0.png" style="width: 135px;" alt="Easwari Engineering College Logo">
       </div>
       <div style="margin-top: 20px;">
         <div style="font-size: 15pt; font-weight: bold; letter-spacing: 0.5px;">EASWARI ENGINEERING COLLEGE</div>
@@ -202,34 +213,33 @@
       </div>
       <p style="font-size: 13pt; font-weight: bold; margin-top: 35px;">OCTOBER 2026</p>
     </div>
-    <div class="page-footer">1</div>
       </section>
 
   <section class="page" id="page-2">
 
-    <div style="text-align: center; padding-top: 15px;">
-      <div class="center-img" style="margin-bottom: 6px;">
-        <img src="college_logo_p1_0.png" style="width: 90px;" alt="Logo">
+    <div class="cert-header">
+      <img src="college_logo_p1_0.png" alt="Logo">
+      <div class="cert-header-text">
+        <div style="font-size: 15pt; font-weight: bold;">EASWARI ENGINEERING COLLEGE</div>
+        <div style="font-size: 10pt; font-weight: bold; margin-top: 2px;">(Autonomous Institution, Affiliated to Anna University, Chennai)</div>
+        <div style="font-size: 10pt; font-weight: bold;">Bharathi Salai, Ramapuram, Chennai – 600089</div>
+        <div style="font-size: 10pt; font-weight: bold;">DEPARTMENT OF COMPUTER SCIENCE AND ENGINEERING (AI & ML)</div>
       </div>
-      <div style="font-size: 15pt; font-weight: bold;">EASWARI ENGINEERING COLLEGE</div>
-      <div style="font-size: 10.5pt; font-weight: bold; margin-top: 2px;">(Autonomous Institution, Affiliated to Anna University, Chennai)</div>
-      <div style="font-size: 10.5pt; font-weight: bold;">Bharathi Salai, Ramapuram, Chennai – 600089</div>
-      <div style="font-size: 10.5pt; font-weight: bold; margin-bottom: 25px;">DEPARTMENT OF ARTIFICIAL INTELLIGENCE AND MACHINE LEARNING</div>
-      <h1 style="font-size: 15pt; font-weight: bold; margin-bottom: 25px;">BONAFIDE CERTIFICATE</h1>
     </div>
-    <p>Certified that this mini project report titled <strong>“SMART URBAN GREEN MANAGEMENT SYSTEM”</strong> is the bonafide work of <strong>NEGESH BALA M (Reg. No: 310624148062)</strong>, who carried out the project work under my supervision in partial fulfillment of the requirements for the award of the degree of Bachelor of Technology in Artificial Intelligence and Machine Learning from Anna University, Chennai during the academic year 2026–2027.</p>
+    <h1 style="font-size: 15pt; font-weight: bold; text-align: center; margin: 30px 0 25px 0;">BONAFIDE CERTIFICATE</h1>
+    <p>Certified that this mini project report titled <strong>“SMART URBAN GREEN MANAGEMENT SYSTEM”</strong> is the bonafide work of <strong>NEGESH BALA M (Reg. No: 310624148062)</strong>, who carried out the project work under my supervision in partial fulfillment of the requirements for the award of the degree of Bachelor of Technology in Computer Science and Engineering (AI & ML) for the course <strong>2311CSE503R - Full Stack Development</strong> from Anna University, Chennai during the academic year 2026–2027.</p>
     <p>This report reflects the original investigations, intelligent machine learning frameworks, and software system implementation undertaken by the candidate. To the best of our knowledge, the matter embodied in this report has not been submitted to any other University or Institution for the award of any degree or diploma.</p>
-    <div style="margin-top: 120px; display: flex; justify-content: space-between; text-align: center;">
+    <div style="margin-top: 130px; display: flex; justify-content: space-between; text-align: center;">
       <div style="width: 45%;">
         <strong>HEAD OF THE DEPARTMENT</strong><br><br>
-        Dr. K. M. Anandkumar, M.E., Ph.D.<br>
-        Professor and Head, AIML<br>
+        Dr. Y. Justin Dhas, M.E., Ph.D.<br>
+        Professor and Head, CSE (AI & ML)<br>
         Easwari Engineering College
       </div>
       <div style="width: 45%;">
         <strong>SUPERVISOR</strong><br><br>
-        Dr. S. Rajalakshmi, M.E., Ph.D.<br>
-        Associate Professor, AIML<br>
+        Ms. Divyanjali, M.E.<br>
+        Assistant Professor, CSE (AI & ML)<br>
         Easwari Engineering College
       </div>
     </div>
@@ -238,18 +248,18 @@
 
   <section class="page" id="page-3">
 
-    <div style="text-align: center; padding-top: 15px;">
-      <div class="center-img" style="margin-bottom: 6px;">
-        <img src="college_logo_p1_0.png" style="width: 90px;" alt="Logo">
+    <div class="cert-header">
+      <img src="college_logo_p1_0.png" alt="Logo">
+      <div class="cert-header-text">
+        <div style="font-size: 15pt; font-weight: bold;">EASWARI ENGINEERING COLLEGE</div>
+        <div style="font-size: 10pt; font-weight: bold; margin-top: 2px;">(Autonomous Institution, Affiliated to Anna University, Chennai)</div>
+        <div style="font-size: 10pt; font-weight: bold;">Bharathi Salai, Ramapuram, Chennai – 600089</div>
+        <div style="font-size: 10pt; font-weight: bold;">DEPARTMENT OF COMPUTER SCIENCE AND ENGINEERING (AI & ML)</div>
       </div>
-      <div style="font-size: 15pt; font-weight: bold;">EASWARI ENGINEERING COLLEGE</div>
-      <div style="font-size: 10.5pt; font-weight: bold; margin-top: 2px;">(Autonomous Institution, Affiliated to Anna University)</div>
-      <div style="font-size: 10.5pt; font-weight: bold;">Ramapuram, Chennai – 600089</div>
-      <div style="font-size: 10.5pt; font-weight: bold; margin-bottom: 25px;">DEPARTMENT OF ARTIFICIAL INTELLIGENCE AND MACHINE LEARNING</div>
-      <h1 style="font-size: 15pt; font-weight: bold; margin-bottom: 25px;">CERTIFICATE OF VIVA-VOCE EXAMINATION</h1>
     </div>
-    <p>This is to certify that the Viva-Voce Examination of the Project Work entitled <strong>“SMART URBAN GREEN MANAGEMENT SYSTEM”</strong> submitted by <strong>Mr. NEGESH BALA M (Reg. No. 310624148062)</strong> in partial fulfillment of the requirements for the award of the degree of Bachelor of Technology in Artificial Intelligence and Machine Learning was conducted on _________________ (Date) in the Department of Artificial Intelligence and Machine Learning, Easwari Engineering College, Ramapuram, Chennai – 600089.</p>
-    <div style="margin-top: 140px; display: flex; justify-content: space-between;">
+    <h1 style="font-size: 15pt; font-weight: bold; text-align: center; margin: 30px 0 25px 0;">CERTIFICATE OF VIVA-VOCE EXAMINATION</h1>
+    <p>This is to certify that the Viva-Voce Examination of the Project Work entitled <strong>“SMART URBAN GREEN MANAGEMENT SYSTEM”</strong> submitted by <strong>Mr. NEGESH BALA M (Reg. No. 310624148062)</strong> in partial fulfillment of the requirements for the award of the degree of Bachelor of Technology in Computer Science and Engineering (AI & ML) was conducted on _________________ (Date) in the Department of Computer Science and Engineering (AI & ML), Easwari Engineering College, Ramapuram, Chennai – 600089.</p>
+    <div style="margin-top: 150px; display: flex; justify-content: space-between;">
       <div style="width: 45%;">
         <strong>INTERNAL EXAMINER</strong><br><br>
         Name: __________________________<br>
@@ -282,11 +292,11 @@
   <section class="page" id="page-5">
 
     <h1 class="chapter-title" style="margin-top: 25px;">ACKNOWLEDGEMENT</h1>
-    <p>I express my profound and sincere gratitude to our respected Principal, <strong>Dr. P. Deiva Sundari, M.E., Ph.D.</strong>, and the Management of Easwari Engineering College for providing state-of-the-art laboratory infrastructure, computational facilities, and a supportive scholarly environment that enabled me to successfully carry out this project work.</p>
-    <p>I convey my heartfelt thanks to our Head of the Department, <strong>Dr. K. M. Anandkumar, M.E., Ph.D.</strong>, Department of Artificial Intelligence and Machine Learning, for his continuous encouragement, constructive suggestions, and administrative support throughout the development lifecycle of this project.</p>
-    <p>I am extraordinarily indebted to my esteemed Project Guide, <strong>Dr. S. Rajalakshmi, M.E., Ph.D.</strong>, Associate Professor, Department of Artificial Intelligence and Machine Learning, for her invaluable guidance, intellectual mentorship, painstaking reviews, and inspiring motivation. Her profound expertise in software engineering and intelligent computing significantly elevated the technical rigor of this system.</p>
-    <p>I extend my warm gratitude to the Project Coordinators and all the faculty and non-teaching staff members of the Department of Artificial Intelligence and Machine Learning for their direct and indirect assistance, insightful feedback during interim progress reviews, and constant technical cooperation.</p>
-    <p>Finally, I express my deepest appreciation and boundless love to my beloved parents, family members, and friends for their unconditional understanding, moral encouragement, sacrifices, and endless support during every phase of my academic journey and this project.</p>
+    <p>We express our sincere gratitude to the Principal <strong>Dr. P. Deiva Sundari</strong> and the Management of our college for providing us with the opportunity to carry out this project work.</p>
+    <p>We convey our heartfelt thanks to the Head of the Department <strong>Dr. Y. Justin Dhas</strong>, Department of Computer Science and Engineering (AI & ML), for the continuous encouragement and support.</p>
+    <p>We are extremely thankful to our Project Guide <strong>Ms. Divyanjali</strong>, Department of Computer Science and Engineering (AI & ML) for valuable guidance, suggestions, and motivation throughout the completion of this project.</p>
+    <p>We would also like to extend our gratitude to all the faculty members of the Department of Computer Science and Engineering (AI & ML) for their support.</p>
+    <p>Finally, we thank our parents and friends for their constant encouragement and help during the course of this project.</p>
     <div style="margin-top: 50px; text-align: right;">
       <strong>NEGESH BALA M</strong><br>
       <strong>(Reg. No: 310624148062)</strong>
@@ -299,7 +309,7 @@
     <h1 class="chapter-title">TABLE OF CONTENTS</h1>
     <table>
       <tr><th style="width: 25%;">SECTION / CHAPTER</th><th style="width: 60%;">DESCRIPTION</th><th style="width: 15%;">PAGE NO.</th></tr>
-      <tr><td>TITLE PAGE</td><td>Project Title, Authors, Degree & Institution</td><td style="text-align: right;">1</td></tr>
+      <tr><td>TITLE PAGE</td><td>Project Title, Authors, Degree & Institution</td><td style="text-align: right;">i</td></tr>
       <tr><td>BONAFIDE CERTIFICATE</td><td>Supervisor and Head of Department Approval</td><td style="text-align: right;">2</td></tr>
       <tr><td>VIVA-VOCE CERTIFICATE</td><td>Internal and External Examiner Endorsement</td><td style="text-align: right;">3</td></tr>
       <tr><td>ABSTRACT</td><td>Problem, Architecture, Implementation & Outcomes</td><td style="text-align: right;">4</td></tr>
@@ -376,7 +386,7 @@
     <p>Figure 5.3: Leaflet GIS Multi-Layer Map Architecture ............................................. 30</p>
     <p>Figure 5.4: Three.js 3D WebGL Digital Twin Rendering Pipeline ................................. 31</p>
     <p>Figure 6.3: API Latency vs Concurrent User Load Curve ............................................ 35</p>
-    <p>Figure App.1: Citizen Interactive Portal with Leaflet GIS Map & 3D Twin ........................ 50</p>
+    <p>Figure App.1: Citizen Interactive Portal with Leaflet Map & 3D Twin ........................ 50</p>
 
     <h3 class="sub-heading" style="margin-top: 25px;">LIST OF TABLES</h3>
     <p>Table 2.1: Comparative Analysis of Existing Urban Green Systems ................................ 15</p>
@@ -1379,21 +1389,18 @@ export default function FloraVisualizer3D({ height = 5.0, crown = 4.0, color = '
     renderer.setSize(width, heightPx);
     mountRef.current.appendChild(renderer.domElement);
 
-    // Trunk Geometry
     const trunkGeo = new THREE.CylinderGeometry(0.3, 0.5, height, 16);
     const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.9 });
     const trunk = new THREE.Mesh(trunkGeo, trunkMat);
     trunk.position.y = height / 2;
     scene.add(trunk);
 
-    // Foliage Canopy Geometry
     const canopyGeo = new THREE.DodecahedronGeometry(crown / 2, 2);
     const canopyMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(color), roughness: 0.7 });
     const canopy = new THREE.Mesh(canopyGeo, canopyMat);
     canopy.position.y = height + (crown / 3.5);
     scene.add(canopy);
 
-    // Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
     const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
@@ -1439,7 +1446,7 @@ export default function FloraVisualizer3D({ height = 5.0, crown = 4.0, color = '
     <p><p>[7] M. Cabello and Three.js Contributors, 'Three.js: JavaScript 3D WebGL Library,' https://threejs.org, 2025.</p></p>
     <p><p>[8] MongoDB Inc., 'MongoDB Geospatial 2dsphere Indexes and GeoJSON Queries Manual,' 2025.</p></p>
     <p><p>[9] Meta Open Source, 'React 18 Architecture: Concurrent Mode and Component Virtual DOM,' 2024.</p></p>
-    <p><p>[10] Tamil Nadu Forest Department, 'Metropolitan Chennai Urban Canopy and Tree Health Assessment Manual,' 2024.</p></p>
+    <p><p>[10] Tamil Nadu Forest Department, 'Metropolitan Chennai Urban Canopy and Tree Health Assessment Manual,' 2024.</p>
     <div class="page-footer">50</div>
   </section>
 
