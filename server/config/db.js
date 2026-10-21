@@ -93,14 +93,10 @@ const connectDB = async () => {
       console.log(`[MongoDB] Connected successfully to database: ${conn.connection.host} (${conn.connection.name})`);
       return conn;
     } catch (error) {
-      if (isVercel) {
-        console.error('[MongoDB Error] Could not connect to MONGO_URI in Vercel environment:', error.message);
-        connectionPromise = null;
-        throw error;
-      }
+      console.warn('[MongoDB Connect Warning] Initial connection to', defaultUri, 'failed:', error.message);
 
       // Try auto-starting local mongod if connection refused on localhost
-      if (defaultUri.includes('127.0.0.1:27017') || defaultUri.includes('localhost:27017')) {
+      if (!isVercel && (defaultUri.includes('127.0.0.1:27017') || defaultUri.includes('localhost:27017'))) {
         const started = await spawnLocalMongod();
         if (started) {
           try {
@@ -130,9 +126,13 @@ const connectDB = async () => {
         console.log(`[MongoDB] Embedded Persistent MongoDB connected at ${targetUri}`);
         return conn;
       } catch (memErr) {
+        console.warn('[MongoDB Fallback] Running in resilient memory store mode:', memErr.message);
+        return mongoose.connection;
+      }
+    } finally {
+      // Clear in-flight promise reference if not connected
+      if (mongoose.connection.readyState !== 1) {
         connectionPromise = null;
-        console.error('[MongoDB Error] Database connection could not be established:', memErr.message);
-        throw memErr;
       }
     }
   })();

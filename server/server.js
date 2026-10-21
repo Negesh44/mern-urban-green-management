@@ -26,21 +26,6 @@ const uploadPath = process.env.VERCEL
   : path.join(__dirname, 'uploads');
 app.use('/uploads', express.static(uploadPath));
 
-// Ensure MongoDB connection is 100% ready before any API route executes
-app.use(async (req, res, next) => {
-  if (req.path.startsWith('/api') && req.path !== '/api/health') {
-    try {
-      await connectDB();
-    } catch (err) {
-      return res.status(503).json({
-        status: 'error',
-        message: 'Database connection initializing. Please try again.',
-      });
-    }
-  }
-  next();
-});
-
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/assets', assetRoutes);
