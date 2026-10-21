@@ -2,6 +2,27 @@ const Asset = require('../models/Asset');
 const MaintenanceLog = require('../models/MaintenanceLog');
 const Report = require('../models/Report');
 
+// In-memory cache for dashboard KPIs (TTL: 30 seconds)
+const dashboardCache = {
+  data: null,
+  timestamp: 0,
+  ttl: 30 * 1000,
+  get() {
+    if (this.data && Date.now() - this.timestamp < this.ttl) {
+      return this.data;
+    }
+    return null;
+  },
+  set(val) {
+    this.data = val;
+    this.timestamp = Date.now();
+  },
+  clear() {
+    this.data = null;
+    this.timestamp = 0;
+  },
+};
+
 /**
  * @desc    Get aggregated dashboard KPIs, metrics, chart data & attention alerts
  * @route   GET /api/dashboard/summary
@@ -9,14 +30,117 @@ const Report = require('../models/Report');
  */
 exports.getDashboardSummary = async (req, res, next) => {
   try {
-    // 1. Total assets by type
-    const rawTypeCounts = await Asset.aggregate([
-      {
-        $group: {
-          _id: '$type',
-          count: { $sum: 1 },
+    const cached = dashboardCache.get();
+    if (cached) {
+      res.setHeader('X-Cache', 'HIT');
+      res.setHeader('Cache-Control', 'public, max-age=15, stale-while-revalidate=45');
+      return res.status(200).json(cached);
+    }
+
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    // Run ALL 7 database queries in PARALLEL for maximum throughput
+    const [
+      rawTypeCounts,
+      rawHealthCounts,
+      areaAggregation,
+      pendingReportsCount,
+      totalReportsCount,
+      needsAttention,
+      allTrees,
+    ] = await Promise.all([
+      // 1. Total assets by type
+      Asset.aggregate([
+        {
+          $group: {
+            _id: '$type',
+            count: { $sum: 1 },
+          },
         },
-      },
+      ]),
+
+      // 2. Tree health distribution
+      Asset.aggregate([
+        { $match: { type: 'tree' } },
+        {
+          $group: {
+            _id: '$healthStatus',
+            count: { $sum: 1 },
+          },
+        },
+      ]),
+
+      // 3. Total Green Area
+      Asset.aggregate([
+        {
+          $match: {
+            type: { $in: ['park', 'urban_forest', 'green_belt'] },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalArea: { $sum: '$area' },
+          },
+        },
+      ]),
+
+      // 4. Pending citizen reports
+      Report.countDocuments({ status: 'Pending' }),
+
+      // 5. Total citizen reports
+      Report.countDocuments(),
+
+      // 6. Overdue / diseased attention items
+      Asset.aggregate([
+        {
+          $lookup: {
+            from: 'maintenancelogs',
+            localField: '_id',
+            foreignField: 'assetId',
+            as: 'maintenanceHistory',
+          },
+        },
+        {
+          $addFields: {
+            lastMaintenanceDate: { $max: '$maintenanceHistory.date' },
+            logsCount: { $size: '$maintenanceHistory' },
+          },
+        },
+        {
+          $match: {
+            $or: [
+              { lastMaintenanceDate: null },
+              { lastMaintenanceDate: { $exists: false } },
+              { lastMaintenanceDate: { $lt: sixMonthsAgo } },
+              { healthStatus: { $in: ['Diseased', 'Dead', 'Poor'] } },
+            ],
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            type: 1,
+            species: 1,
+            healthStatus: 1,
+            location: 1,
+            lastMaintenanceDate: 1,
+            logsCount: 1,
+            createdAt: 1,
+          },
+        },
+        {
+          $sort: {
+            lastMaintenanceDate: 1,
+            healthStatus: -1,
+          },
+        },
+      ]),
+
+      // 7. Tree survival cohort data
+      Asset.find({ type: 'tree' }).select('plantingDate healthStatus createdAt').lean(),
     ]);
 
     const typeMap = {
@@ -44,17 +168,6 @@ exports.getDashboardSummary = async (req, res, next) => {
     const totalParksForestsBelts =
       typeMap.park.count + typeMap.urban_forest.count + typeMap.green_belt.count;
 
-    // 2. Tree health distribution (Healthy, Diseased, Dead)
-    const rawHealthCounts = await Asset.aggregate([
-      { $match: { type: 'tree' } },
-      {
-        $group: {
-          _id: '$healthStatus',
-          count: { $sum: 1 },
-        },
-      },
-    ]);
-
     const healthMap = {
       Healthy: { count: 0, color: '#10b981' },
       Diseased: { count: 0, color: '#f59e0b' },
@@ -79,87 +192,13 @@ exports.getDashboardSummary = async (req, res, next) => {
       { name: 'Dead', value: healthMap.Dead.count, color: healthMap.Dead.color },
     ];
 
-    // 3. Total Green Area (sum of area field across parks, urban forests, green belts)
-    const areaAggregation = await Asset.aggregate([
-      {
-        $match: {
-          type: { $in: ['park', 'urban_forest', 'green_belt'] },
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          totalArea: { $sum: '$area' },
-        },
-      },
-    ]);
-
     const totalGreenArea = areaAggregation.length > 0 ? areaAggregation[0].totalArea : 0;
     const totalGreenAreaHectares = parseFloat((totalGreenArea / 10000).toFixed(2));
-
-    // 4. Pending citizen reports count
-    const pendingReportsCount = await Report.countDocuments({ status: 'Pending' });
-    const totalReportsCount = await Report.countDocuments();
-
-    // 5. Assets with no maintenance log in the last 6 months (Needs Attention)
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
-    const needsAttention = await Asset.aggregate([
-      {
-        $lookup: {
-          from: 'maintenancelogs',
-          localField: '_id',
-          foreignField: 'assetId',
-          as: 'maintenanceHistory',
-        },
-      },
-      {
-        $addFields: {
-          lastMaintenanceDate: { $max: '$maintenanceHistory.date' },
-          logsCount: { $size: '$maintenanceHistory' },
-        },
-      },
-      {
-        $match: {
-          $or: [
-            { lastMaintenanceDate: null },
-            { lastMaintenanceDate: { $exists: false } },
-            { lastMaintenanceDate: { $lt: sixMonthsAgo } },
-            { healthStatus: { $in: ['Diseased', 'Dead', 'Poor'] } },
-          ],
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          name: 1,
-          type: 1,
-          species: 1,
-          healthStatus: 1,
-          location: 1,
-          lastMaintenanceDate: 1,
-          logsCount: 1,
-          createdAt: 1,
-        },
-      },
-      {
-        $sort: {
-          lastMaintenanceDate: 1,
-          healthStatus: -1,
-        },
-      },
-    ]);
-
-    // 6. Tree survival rate trend over time (cohorts derived from planting dates and health status)
-    const allTrees = await Asset.find({ type: 'tree' }).select('plantingDate healthStatus createdAt');
 
     // Build timeline buckets
     const years = [2022, 2023, 2024, 2025, 2026];
     const treeSurvivalRateTrend = years.map((year) => {
       const yearEnd = new Date(`${year}-12-31T23:59:59Z`);
-      
-      // Trees planted on or before this year end
       const cohort = allTrees.filter((t) => {
         const pDate = t.plantingDate || t.createdAt;
         return pDate && new Date(pDate) <= yearEnd;
@@ -187,7 +226,7 @@ exports.getDashboardSummary = async (req, res, next) => {
       };
     });
 
-    res.status(200).json({
+    const resultPayload = {
       status: 'success',
       data: {
         summaryCards: {
@@ -205,7 +244,13 @@ exports.getDashboardSummary = async (req, res, next) => {
         needsAttentionCount: needsAttention.length,
         needsAttention,
       },
-    });
+    };
+
+    dashboardCache.set(resultPayload);
+    res.setHeader('X-Cache', 'MISS');
+    res.setHeader('Cache-Control', 'public, max-age=15, stale-while-revalidate=45');
+
+    res.status(200).json(resultPayload);
   } catch (error) {
     next(error);
   }

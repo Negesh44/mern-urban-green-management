@@ -70,9 +70,12 @@ const assetSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for high performance spatial & category filtering
+// Indexes for high performance spatial, category, and text search
 assetSchema.index({ type: 1 });
 assetSchema.index({ healthStatus: 1 });
+assetSchema.index({ type: 1, healthStatus: 1 });
 assetSchema.index({ 'location.lat': 1, 'location.lng': 1 });
+assetSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model('Asset', assetSchema);
+

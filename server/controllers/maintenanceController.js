@@ -26,8 +26,10 @@ const getMaintenanceByAsset = async (req, res) => {
 
     const logs = await MaintenanceLog.find({ assetId })
       .sort({ date: -1 })
-      .populate('assetId', 'name type species location');
+      .populate('assetId', 'name type species location')
+      .lean();
 
+    res.setHeader('Cache-Control', 'public, max-age=10, stale-while-revalidate=30');
     res.status(200).json({
       status: 'success',
       asset: {

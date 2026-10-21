@@ -115,8 +115,10 @@ const getReports = async (req, res) => {
     const reports = await Report.find(filter)
       .sort({ createdAt: -1 })
       .populate('citizenId', 'name email')
-      .populate('assetId', 'name type species location healthStatus');
+      .populate('assetId', 'name type species location healthStatus')
+      .lean();
 
+    res.setHeader('Cache-Control', 'public, max-age=5, stale-while-revalidate=15');
     res.status(200).json({
       status: 'success',
       count: reports.length,

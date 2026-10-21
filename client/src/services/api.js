@@ -43,4 +43,53 @@ API.interceptors.response.use(
   }
 );
 
+// --- High-Speed Client Response Cache (0ms instant loads) ---
+const clientCache = new Map();
+const CLIENT_CACHE_TTL = 15000; // 15 seconds
+
+export const clearApiCache = () => {
+  clientCache.clear();
+};
+
+// Wrap API.get with instant memory cache
+const originalGet = API.get.bind(API);
+API.get = async (url, config = {}) => {
+  if (config.skipCache) {
+    return originalGet(url, config);
+  }
+
+  const token = localStorage.getItem('token') || 'anon';
+  const cacheKey = `${token}:${url}:${JSON.stringify(config.params || {})}`;
+  const entry = clientCache.get(cacheKey);
+
+  if (entry && Date.now() - entry.timestamp < CLIENT_CACHE_TTL) {
+    return Promise.resolve({
+      ...entry.response,
+      headers: { ...entry.response.headers, 'x-client-cache': 'HIT' },
+    });
+  }
+
+  const res = await originalGet(url, config);
+
+  if (res && res.status >= 200 && res.status < 300) {
+    clientCache.set(cacheKey, {
+      timestamp: Date.now(),
+      response: res,
+    });
+  }
+
+  return res;
+};
+
+// Auto-invalidate client cache on state-changing operations
+['post', 'put', 'patch', 'delete'].forEach((method) => {
+  const originalMethod = API[method].bind(API);
+  API[method] = async (...args) => {
+    const result = await originalMethod(...args);
+    clearApiCache();
+    return result;
+  };
+});
+
 export default API;
+
