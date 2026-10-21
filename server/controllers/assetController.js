@@ -130,24 +130,50 @@ const getAssetById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Invalid asset ID format',
-      });
+    let asset = null;
+
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      asset = await Asset.findById(id).lean();
     }
 
-    const [asset, maintenanceLogs] = await Promise.all([
-      Asset.findById(id).lean(),
-      MaintenanceLog.find({ assetId: id }).sort({ date: -1 }).lean(),
-    ]);
+    // Smart Resolver: Support fallback codes (e.g. 'chn_tree_01', 'chn_park_02') and name slugs
+    if (!asset && typeof id === 'string') {
+      if (id.startsWith('chn_')) {
+        const parts = id.split('_'); // ['chn', 'tree', '01']
+        const rawType = parts[1];
+        const num = parseInt(parts[2], 10);
+        const mappedType =
+          rawType === 'forest' ? 'urban_forest' : rawType === 'belt' ? 'green_belt' : rawType;
+
+        if (mappedType && !isNaN(num) && num > 0) {
+          const typeAssets = await Asset.find({ type: mappedType })
+            .sort({ createdAt: 1, _id: 1 })
+            .lean();
+          if (typeAssets.length > 0) {
+            asset = typeAssets[(num - 1) % typeAssets.length];
+          }
+        }
+      }
+
+      // If still not found, search by name regex or slug
+      if (!asset) {
+        const cleanName = id.replace(/[-_]/g, ' ').trim();
+        asset = await Asset.findOne({
+          name: { $regex: cleanName, $options: 'i' },
+        }).lean();
+      }
+    }
 
     if (!asset) {
       return res.status(404).json({
         status: 'error',
-        message: `Asset with ID ${id} not found`,
+        message: `Asset with identifier '${id}' was not found in the Chennai registry.`,
       });
     }
+
+    const maintenanceLogs = await MaintenanceLog.find({ assetId: asset._id })
+      .sort({ date: -1 })
+      .lean();
 
     res.status(200).json({
       status: 'success',

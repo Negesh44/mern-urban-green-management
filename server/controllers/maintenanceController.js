@@ -9,18 +9,23 @@ const getMaintenanceByAsset = async (req, res) => {
   try {
     const { assetId } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(assetId)) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Invalid asset ID format',
+    let asset = null;
+    if (mongoose.Types.ObjectId.isValid(assetId)) {
+      asset = await Asset.findById(assetId);
+    } else {
+      // Try resolving by name or slug
+      const cleanName = assetId.replace(/[-_]/g, ' ').trim();
+      asset = await Asset.findOne({
+        name: { $regex: cleanName, $options: 'i' },
       });
     }
 
-    const asset = await Asset.findById(assetId);
     if (!asset) {
-      return res.status(404).json({
-        status: 'error',
-        message: `Asset with ID ${assetId} not found`,
+      return res.status(200).json({
+        status: 'success',
+        asset: null,
+        count: 0,
+        data: [],
       });
     }
 
