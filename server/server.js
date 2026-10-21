@@ -13,28 +13,12 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 // Load environment variables
 dotenv.config();
 
-// Connect to Database
-connectDB();
-
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Database connection readiness check (prevents 10s buffering timeouts)
-app.use((req, res, next) => {
-  if (req.path.startsWith('/api') && req.path !== '/api/health') {
-    if (mongoose.connection.readyState !== 1) {
-      return res.status(503).json({
-        status: 'error',
-        message: 'Database is establishing connection. Please retry in a few moments.',
-      });
-    }
-  }
-  next();
-});
 
 // Serve static uploaded assets & images
 const uploadPath = process.env.VERCEL
@@ -86,10 +70,19 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-if (require.main === module && !process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(`[Server] Smart Urban Green Backend running on port ${PORT}`);
-  });
-}
+const startServer = async () => {
+  try {
+    await connectDB();
+    if (require.main === module && !process.env.VERCEL) {
+      app.listen(PORT, () => {
+        console.log(`[Server] Smart Urban Green Backend running on port ${PORT}`);
+      });
+    }
+  } catch (err) {
+    console.error('[Fatal Server Startup Error]', err.message);
+  }
+};
+
+startServer();
 
 module.exports = app;
