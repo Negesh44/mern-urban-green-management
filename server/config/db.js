@@ -67,6 +67,9 @@ mongoose.connection.on('disconnected', () => {
   console.warn('[MongoDB Event] Connection lost, reconnecting...');
 });
 
+// Disable buffering so Mongoose never holds requests in a 10-second stall
+mongoose.set('bufferCommands', false);
+
 const connectDB = async () => {
   // Reuse existing connection in serverless warm invocations
   if (mongoose.connection.readyState >= 1) {
@@ -77,10 +80,10 @@ const connectDB = async () => {
 
   try {
     const conn = await mongoose.connect(defaultUri, {
-      serverSelectionTimeoutMS: 2000,
+      serverSelectionTimeoutMS: 5000,
       maxPoolSize: 20,
       minPoolSize: 5,
-      autoIndex: true,
+      autoIndex: false,
     });
     console.log(`[MongoDB] Connected successfully to database: ${conn.connection.host} (${conn.connection.name})`);
     return conn;

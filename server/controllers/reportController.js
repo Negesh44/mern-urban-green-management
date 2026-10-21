@@ -68,6 +68,8 @@ const createReport = async (req, res) => {
       }
     }
 
+    console.log('[createReport] Processing report:', { citizenId, description: description.trim().substring(0, 40) });
+
     const newReport = await Report.create({
       citizenId,
       assetId: validAssetId,
@@ -79,7 +81,8 @@ const createReport = async (req, res) => {
 
     const populatedReport = await Report.findById(newReport._id)
       .populate('citizenId', 'name email')
-      .populate('assetId', 'name type species location');
+      .populate('assetId', 'name type species location')
+      .lean();
 
     res.status(201).json({
       status: 'success',
